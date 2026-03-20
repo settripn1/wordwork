@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0a0a0c">
+  <title>WordWork — Spelling Coach</title>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; -webkit-text-size-adjust: 100%; }
+    body { height: 100%; background: #0a0a0c; overscroll-behavior: none; -webkit-font-smoothing: antialiased; }
+    input, button, select { font-family: inherit; -webkit-appearance: none; appearance: none; }
+    input[type="range"] { -webkit-appearance: auto; appearance: auto; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+const {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useMemo
+} = React;
+
+// ── STORAGE ─────────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'wordwork_v3';
+function loadStorage() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+function saveStorage(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {}
+}
+
+// ── MASTERY LEVELS ───────────────────────────────────────────────────────────
+const MASTERY = [{
+  label: 'New',
+  emoji: '🌱',
+  color: '#94a3b8',
+  bg: 'rgba(148,163,184,0.1)',
+  border: 'rgba(148,163,184,0.22)'
+}, {
+  label: 'Learning',
+  emoji: '🔥',
+  color: '#f87171',
+  bg: 'rgba(248,113,113,0.1)',
+  border: 'rgba(248,113,113,0.22)'
+}, {
+  label: 'Familiar',
+  emoji: '⚡',
+  color: '#fb923c',
+  bg: 'rgba(251,146,60,0.1)',
+  border: 'rgba(251,146,60,0.22)'
+}, {
+  label: 'Practiced',
+  emoji: '💫',
+  color: '#fbbf24',
+  bg: 'rgba(251,191,36,0.1)',
+  border: 'rgba(251,191,36,0.22)'
+}, {
+  label: 'Confident',
+  emoji: '✅',
+  color: '#34d399',
+  bg: 'rgba(52,211,153,0.1)',
+  border: 'rgba(52,211,153,0.22)'
+}, {
+  label: 'Mastered',
+  emoji: '🏆',
+  color: '#818cf8',
+  bg: 'rgba(129,140,248,0.1)',
+  border: 'rgba(129,140,248,0.22)'
+}];
+
+// ── CATEGORY COLORS ──────────────────────────────────────────────────────────
+const COL = {
+  'Your Typos': {
+    bg: 'rgba(251,113,133,0.13)',
+    border: 'rgba(251,113,133,0.30)',
+    text: '#fda4af'
+  },
+  'Work': {
+    bg: 'rgba(251,191,36,0.10)',
+    border: 'rgba(251,191,36,0.26)',
+    text: '#fcd34d'
+  },
+  'Classic': {
+    bg: 'rgba(139,92,246,0.13)',
+    border: 'rgba(139,92,246,0.30)',
+    text: '#c4b5fd'
+  },
+  'Confused': {
+    bg: 'rgba(56,189,248,0.11)',
+    border: 'rgba(56,189,248,0.26)',
+    text: '#7dd3fc'
+  }
+};
+
+// ── WORD LIST ────────────────────────────────────────────────────────────────
+const ALL_WORDS = [
+// 🔴 YOUR TYPOS — caught directly from your messages and chats
+{
+  word: "additional",
+  hint: "You wrote 'addtional' — add·ition·al, four syllables",
+  category: "Your Typos"
+}, {
+  word: "practice",
+  hint: "You wrote 'pactice' — prac·TICE, don't drop the R",
+  category: "Your Typos"
+}, {
+  word: "purposeful",
+  hint: "You wrote 'purpouseful' — pur·POSE·ful, no extra O",
+  category: "Your Typos"
+}, {
+  word: "misspelled",
+  hint: "You wrote 'miss spelled' — one word, double S: mis·SPELLED",
+  category: "Your Typos"
+}, {
+  word: "Ballinger",
+  hint: "The legal firm — not 'Berlinger'",
+  category: "Your Typos"
+}, {
+  word: "separating",
+  hint: "You wrote 'speerating' — there's a RAT in sepa·RAT·ing",
+  category: "Your Typos"
+}, {
+  word: "continue",
+  hint: "You wrote 'continuy' — con·TIN·ue, ends in -ue",
+  category: "Your Typos"
+}, {
+  word: "doesn't",
+  hint: "You wrote 'dosent' — does + n't, the O stays",
+  category: "Your Typos"
+}, {
+  word: "everything",
+  hint: "You wrote 'everyting' — every + THING, don't drop the H",
+  category: "Your Typos"
+}, {
+  word: "straightforward",
+  hint: "Straight + forward, no extra letters anywhere",
+  category: "Your Typos"
+}, {
+  word: "Excellerate",
+  hint: "Your JPMC microlearning platform — Excel + erate",
+  category: "Your Typos"
+}, {
+  word: "opportunity",
+  hint: "op·por·TUN·ity — double P, easy to miss",
+  category: "Your Typos"
+}, {
+  word: "definitely",
+  hint: "Not 'definately' — FINITE is hiding inside it: de·FINITE·ly",
+  category: "Your Typos"
+}, {
+  word: "basically",
+  hint: "basic + ally — not 'basicly', needs the full 'ally'",
+  category: "Your Typos"
+}, {
+  word: "probably",
+  hint: "prob + ably — not 'probaly', three syllables",
+  category: "Your Typos"
+}, {
+  word: "business",
+  hint: "busi·ness — the I softens: 'bizness' but spelled with UI",
+  category: "Your Typos"
+}, {
+  word: "because",
+  hint: "be + cause — not 'becuase', the A comes before U",
+  category: "Your Typos"
+}, {
+  word: "receive",
+  hint: "I before E except after C — re·CEIVE",
+  category: "Your Typos"
+}, {
+  word: "honestly",
+  hint: "honest + ly — silent H, don't forget the E: hon·EST·ly",
+  category: "Your Typos"
+}, {
+  word: "separate",
+  hint: "There's a RAT in sepa·RAT·e — not 'seperate'",
+  category: "Your Typos"
+}, {
+  word: "actually",
+  hint: "actual + ly — not 'actualy', keep the full 'actual'",
+  category: "Your Typos"
+}, {
+  word: "important",
+  hint: "im·PORT·ant — not 'importent', ends in -ant not -ent",
+  category: "Your Typos"
+}, {
+  word: "different",
+  hint: "differ + ent — not 'diffrent', four syllables",
+  category: "Your Typos"
+}, {
+  word: "necessary",
+  hint: "One Collar two Socks — 1 C, 2 S's: nec·ES·Sary",
+  category: "Your Typos"
+},
+// 🟠 WORK — CCB / L&D / JPMC terms
+{
+  word: "microlearning",
+  hint: "Short, focused learning content — micro + learning",
+  category: "Work"
+}, {
+  word: "prioritization",
+  hint: "Ranking by importance — prior·ity + ization",
+  category: "Work"
+}, {
+  word: "consolidation",
+  hint: "Combining into one structure — con·solid·ation",
+  category: "Work"
+}, {
+  word: "governance",
+  hint: "Rules and oversight — govern + ance, no extra letters",
+  category: "Work"
+}, {
+  word: "architecture",
+  hint: "Structural design — archi·TEC·ture, not 'archetecture'",
+  category: "Work"
+}, {
+  word: "fragmented",
+  hint: "Broken into disconnected pieces — frag·MENT·ed",
+  category: "Work"
+}, {
+  word: "operational",
+  hint: "Day-to-day running — oper·ation + al",
+  category: "Work"
+}, {
+  word: "centralized",
+  hint: "Under one center of control — central + ized",
+  category: "Work"
+}, {
+  word: "stakeholder",
+  hint: "Someone with interest in outcome — stake + holder",
+  category: "Work"
+}, {
+  word: "triage",
+  hint: "Sorting by priority — French origin, tri·AGE",
+  category: "Work"
+}, {
+  word: "collaborative",
+  hint: "Done jointly — col·labor + ative, not 'colaborative'",
+  category: "Work"
+}, {
+  word: "infrastructure",
+  hint: "Underlying foundation — infra + structure, not 'infastructure'",
+  category: "Work"
+}, {
+  word: "efficiency",
+  hint: "Results without waste — ef·FICI·ency, double F",
+  category: "Work"
+}, {
+  word: "deliverable",
+  hint: "A tangible output — deliver + able",
+  category: "Work"
+}, {
+  word: "acknowledgment",
+  hint: "No 'e' after acknowledg in American English",
+  category: "Work"
+}, {
+  word: "curriculum",
+  hint: "Course of study — two R's: cur·RIC·ulum",
+  category: "Work"
+}, {
+  word: "facilitation",
+  hint: "Running a session — facil + itation, one L",
+  category: "Work"
+}, {
+  word: "assessment",
+  hint: "Two S's twice — as·SESS·ment",
+  category: "Work"
+}, {
+  word: "implementation",
+  hint: "Putting into action — implement + ation, not 'implemention'",
+  category: "Work"
+}, {
+  word: "communication",
+  hint: "Sharing information — two M's: com·MUN·ication",
+  category: "Work"
+}, {
+  word: "presentation",
+  hint: "Showing to an audience — present + ation, not 'presentaion'",
+  category: "Work"
+}, {
+  word: "organization",
+  hint: "Structure — organ + ization, not 'organziation'",
+  category: "Work"
+}, {
+  word: "professional",
+  hint: "Expert and polished — profess + ional, double S",
+  category: "Work"
+}, {
+  word: "development",
+  hint: "Growth or building — develop + ment, not 'developement'",
+  category: "Work"
+}, {
+  word: "engagement",
+  hint: "Active involvement — en·GAGE·ment",
+  category: "Work"
+}, {
+  word: "documentation",
+  hint: "Written records — document + ation, five syllables",
+  category: "Work"
+}, {
+  word: "coordination",
+  hint: "Working together — co + ordination, two O's side by side",
+  category: "Work"
+}, {
+  word: "measurement",
+  hint: "Quantifying results — measure + ment, not 'measurment'",
+  category: "Work"
+}, {
+  word: "sustainability",
+  hint: "Long-term viability — sustain + ability, not 'sustainibility'",
+  category: "Work"
+}, {
+  word: "accountability",
+  hint: "Taking ownership — account + ability, not 'accountibility'",
+  category: "Work"
+},
+// 🟡 CLASSIC — famously tricky English words
+{
+  word: "appointment",
+  hint: "A scheduled meeting — ap·POINT·ment",
+  category: "Classic"
+}, {
+  word: "occurrence",
+  hint: "Two C's, two R's — it oc·CURR·ence occurs twice!",
+  category: "Classic"
+}, {
+  word: "recommend",
+  hint: "One C, two M's — re·COM·Mend",
+  category: "Classic"
+}, {
+  word: "embarrass",
+  hint: "Really, really embarrassing — two R's, two S's",
+  category: "Classic"
+}, {
+  word: "Wednesday",
+  hint: "Say it slowly: Wed·NES·day — the D hides",
+  category: "Classic"
+}, {
+  word: "February",
+  hint: "Feb·RU·ary — the first R is silent but must be written",
+  category: "Classic"
+}, {
+  word: "privilege",
+  hint: "No 'd' — privi·LEGE, not 'priviledge'",
+  category: "Classic"
+}, {
+  word: "receipt",
+  hint: "I before E except after C — re·CEIPT, silent P",
+  category: "Classic"
+}, {
+  word: "colleague",
+  hint: "Two L's, ends in -eague like league — col·LEAGUE",
+  category: "Classic"
+}, {
+  word: "accommodate",
+  hint: "Two C's, two M's — it's roomy enough for both",
+  category: "Classic"
+}, {
+  word: "millennium",
+  hint: "Two L's, two N's — mille + nnium",
+  category: "Classic"
+}, {
+  word: "maintenance",
+  hint: "Main·TEN·ance — not 'maintainance', no second I",
+  category: "Classic"
+}, {
+  word: "judgment",
+  hint: "No 'e' after judg in American English — just judgment",
+  category: "Classic"
+}, {
+  word: "liaison",
+  hint: "Li·ai·son — two vowel pairs back to back, French origin",
+  category: "Classic"
+}, {
+  word: "entrepreneur",
+  hint: "Entre·pre·NEUR — French, ends in -eur not -er",
+  category: "Classic"
+}, {
+  word: "conscientious",
+  hint: "Science is hiding: con·SCIENCE·tious — truly thorough",
+  category: "Classic"
+}, {
+  word: "paraphrase",
+  hint: "Para·phrase — one R only, not 'para-phrase'",
+  category: "Classic"
+}, {
+  word: "possession",
+  hint: "Four S's total — pos·SESS·ion, double S in the middle",
+  category: "Classic"
+}, {
+  word: "rhythm",
+  hint: "No traditional vowels — RHYTHM Has Your Two Hips Moving",
+  category: "Classic"
+}, {
+  word: "committee",
+  hint: "Double M, double T, double E — com·MIT·TEE",
+  category: "Classic"
+}, {
+  word: "guarantee",
+  hint: "Guar·AN·tee — silent U after G, ends in double E",
+  category: "Classic"
+}, {
+  word: "independent",
+  hint: "in·de·PEN·dent — middle syllable has E not A",
+  category: "Classic"
+}, {
+  word: "maneuver",
+  hint: "Man·EU·ver — French origin, no O: not 'manoeuver'",
+  category: "Classic"
+}, {
+  word: "sergeant",
+  hint: "Ser·GEANT — G then E, sounds like 'sarjent'",
+  category: "Classic"
+}, {
+  word: "supersede",
+  hint: "The only English word ending -sede — not -cede or -ceed",
+  category: "Classic"
+}, {
+  word: "perseverance",
+  hint: "per·se·VER·ance — not 'perserverance', VER in the middle",
+  category: "Classic"
+}, {
+  word: "mischievous",
+  hint: "mis·CHIE·vous — 3 syllables only, no 'mischievious'",
+  category: "Classic"
+}, {
+  word: "conscience",
+  hint: "con·SCIENCE — science is your moral compass",
+  category: "Classic"
+}, {
+  word: "questionnaire",
+  hint: "question + naire — double N, French origin",
+  category: "Classic"
+}, {
+  word: "exaggerate",
+  hint: "ex·AGG·erate — double G, not 'exagerate'",
+  category: "Classic"
+}, {
+  word: "miscellaneous",
+  hint: "mis·cel·LA·neous — double L in the middle",
+  category: "Classic"
+},
+// 🔵 COMMONLY CONFUSED — words people swap for each other
+{
+  word: "affect",
+  hint: "Usually the VERB — rain affects your mood (action)",
+  category: "Confused"
+}, {
+  word: "effect",
+  hint: "Usually the NOUN — the effect of rain (end result)",
+  category: "Confused"
+}, {
+  word: "complement",
+  hint: "To complete or enhance — complEment = complEte",
+  category: "Confused"
+}, {
+  word: "compliment",
+  hint: "A kind remark — complIment = I say nice things",
+  category: "Confused"
+}, {
+  word: "principal",
+  hint: "The main one — school princIPAL is your PAL",
+  category: "Confused"
+}, {
+  word: "principle",
+  hint: "A rule or belief — principLE = rULE",
+  category: "Confused"
+}, {
+  word: "stationary",
+  hint: "Not moving — stationARY = stAY in place",
+  category: "Confused"
+}, {
+  word: "stationery",
+  hint: "Paper and pens — stationERY = lettERS and papER",
+  category: "Confused"
+}, {
+  word: "their",
+  hint: "Belonging to them — THEIR has 'heir' inside it",
+  category: "Confused"
+}, {
+  word: "there",
+  hint: "A place — thERE = hERE, it's a location",
+  category: "Confused"
+}, {
+  word: "conscious",
+  hint: "Aware and awake — con·SCIOUS, not 'concious'",
+  category: "Confused"
+}, {
+  word: "discreet",
+  hint: "Careful and tactful — discrEEt = careful with E's",
+  category: "Confused"
+}, {
+  word: "discrete",
+  hint: "Separate and distinct — discrete items are apart",
+  category: "Confused"
+}, {
+  word: "council",
+  hint: "A governing body — COUNCIL = a group that COUNts on each other",
+  category: "Confused"
+}, {
+  word: "counsel",
+  hint: "Advice or a lawyer — COUNSEL gives you advice",
+  category: "Confused"
+}];
+const CATEGORIES = ['All', ...Object.keys(COL)];
+const SESSION_SIZE = 15;
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+function getMasteryLevel(mastery, word) {
+  return Math.min(5, Math.max(0, mastery[word.toLowerCase()] || 0));
+}
+
+// Weighted spaced repetition queue — feels random but is purposeful
+// Weak words appear 8× more than mastered words
+const WEIGHTS = [8, 6, 4, 2, 1, 0.4];
+function buildQueue(words, mastery, category, customWords) {
+  const pool = category === 'All' ? [...words, ...customWords] : [...words, ...customWords].filter(w => w.category === category);
+  if (!pool.length) return [];
+  const getLevel = w => getMasteryLevel(mastery, w.word);
+  const target = Math.min(pool.length, SESSION_SIZE);
+
+  // Sort into tiers
+  const weak = shuffle(pool.filter(w => getLevel(w) <= 1));
+  const medium = shuffle(pool.filter(w => getLevel(w) >= 2 && getLevel(w) <= 3));
+  const strong = shuffle(pool.filter(w => getLevel(w) >= 4));
+  const queue = [];
+  const used = new Set();
+
+  // Fill ~60% with weak words
+  const weakTarget = Math.min(weak.length, Math.ceil(target * 0.6));
+  for (const w of weak) {
+    if (queue.length >= weakTarget) break;
+    if (!used.has(w.word)) {
+      queue.push(w);
+      used.add(w.word);
+    }
+  }
+
+  // Fill ~30% with medium words
+  const medTarget = Math.min(medium.length, Math.ceil(target * 0.3));
+  for (const w of medium) {
+    if (queue.length >= weakTarget + medTarget) break;
+    if (!used.has(w.word)) {
+      queue.push(w);
+      used.add(w.word);
+    }
+  }
+
+  // Fill rest with strong/mastered (confidence boost)
+  for (const w of strong) {
+    if (queue.length >= target) break;
+    if (!used.has(w.word)) {
+      queue.push(w);
+      used.add(w.word);
+    }
+  }
+
+  // If still short, pad from any pool
+  for (const w of shuffle(pool)) {
+    if (queue.length >= target) break;
+    if (!used.has(w.word)) {
+      queue.push(w);
+      used.add(w.word);
+    }
+  }
+  return shuffle(queue);
+}
+
+// ── VOICE ENGINE ─────────────────────────────────────────────────────────────
+function getEnglishVoices() {
+  return (window.speechSynthesis?.getVoices() || []).filter(v => v.lang.startsWith('en'));
+}
+const PREFERRED_VOICES = ['Google US English', 'Microsoft Aria Online (Natural) - English (United States)', 'Microsoft Guy Online (Natural) - English (United States)', 'Microsoft Jenny Online (Natural) - English (United States)', 'Samantha', 'Alex', 'Karen', 'Google UK English Female', 'Google UK English Male'];
+function pickBestVoice(voices, preferred) {
+  if (preferred) {
+    const match = voices.find(v => v.name === preferred);
+    if (match) return match;
+  }
+  for (const name of PREFERRED_VOICES) {
+    const v = voices.find(v => v.name === name);
+    if (v) return v;
+  }
+  return voices[0] || null;
+}
+function speakWord(text, voice, rate = 0.82, pitch = 1) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  if (voice) u.voice = voice;
+  u.rate = rate;
+  u.pitch = pitch;
+  window.speechSynthesis.speak(u);
+}
+
+// ── MAIN APP ─────────────────────────────────────────────────────────────────
+function SpellingApp() {
+  // no export default — not supported in browser Babel
+  const [store, setStore] = useState(loadStorage);
+  const mastery = store.mastery || {};
+  const bestStreak = store.bestStreak || 0;
+  const totalSessions = store.totalSessions || 0;
+  function updateStore(patch) {
+    setStore(prev => {
+      const next = {
+        ...prev,
+        ...patch
+      };
+      saveStorage(next);
+      return next;
+    });
+  }
+
+  // Screens: home | practice | results | manage | stats
+  const [screen, setScreen] = useState('home');
+  const [selCat, setSelCat] = useState('All');
+  const [queue, setQueue] = useState([]);
+  const [qIdx, setQIdx] = useState(0);
+  const [input, setInput] = useState('');
+  const [revealed, setRevealed] = useState(false);
+  const [results, setResults] = useState([]);
+  const [feedback, setFeedback] = useState(null); // null | 'correct' | 'wrong'
+  const [streak, setStreak] = useState(0);
+  const [sessionStreak, setSessionStreak] = useState(0);
+
+  // Custom words
+  const [customWords, setCustomWords] = useState(() => store.customWords || []);
+  const [newWord, setNewWord] = useState('');
+  const [newHint, setNewHint] = useState('');
+
+  // Voice
+  const [voices, setVoices] = useState([]);
+  const [selectedVoice, setSelectedVoice] = useState(null);
+  const [voiceRate, setVoiceRate] = useState(() => store.voiceRate || 0.82);
+  const [showSettings, setShowSettings] = useState(false);
+  const inputRef = useRef(null);
+  const allWords = useMemo(() => [...ALL_WORDS, ...customWords], [customWords]);
+
+  // Load voices
+  useEffect(() => {
+    function load() {
+      const v = getEnglishVoices();
+      if (v.length) {
+        setVoices(v);
+        setSelectedVoice(pickBestVoice(v, store.voiceName));
+      }
+    }
+    load();
+    if (window.speechSynthesis) {
+      window.speechSynthesis.addEventListener('voiceschanged', load);
+      return () => window.speechSynthesis.removeEventListener('voiceschanged', load);
+    }
+  }, []);
+  const doSpeak = useCallback(text => {
+    speakWord(text, selectedVoice, voiceRate);
+  }, [selectedVoice, voiceRate]);
+
+  // Current word
+  const cw = queue[qIdx];
+
+  // Start practice
+  function startPractice() {
+    const q = buildQueue(ALL_WORDS, mastery, selCat, customWords);
+    setQueue(q);
+    setQIdx(0);
+    setInput('');
+    setRevealed(false);
+    setResults([]);
+    setStreak(0);
+    setSessionStreak(0);
+    setFeedback(null);
+    setScreen('practice');
+    setTimeout(() => {
+      if (q[0]) doSpeak(q[0].word);
+      inputRef.current?.focus();
+    }, 350);
+  }
+
+  // Advance after answer
+  const advance = useCallback(res => {
+    const delay = res === 'correct' ? 520 : 1050;
+    setTimeout(() => {
+      setFeedback(null);
+      const next = qIdx + 1;
+      if (next >= queue.length) {
+        updateStore({
+          totalSessions: totalSessions + 1
+        });
+        setScreen('results');
+      } else {
+        setQIdx(next);
+        setInput('');
+        setRevealed(false);
+        doSpeak(queue[next].word);
+        setTimeout(() => inputRef.current?.focus(), 80);
+      }
+    }, delay);
+  }, [qIdx, queue, doSpeak, totalSessions]);
+
+  // Check answer
+  const check = useCallback(() => {
+    if (!input.trim() || feedback || !cw) return;
+    const ok = input.trim().toLowerCase() === cw.word.toLowerCase();
+    const key = cw.word.toLowerCase();
+    const prev = getMasteryLevel(mastery, cw.word);
+    const next = ok ? Math.min(5, prev + 1) : Math.max(0, prev - 1);
+    const newMastery = {
+      ...mastery,
+      [key]: next
+    };
+    const newStreak = ok ? streak + 1 : 0;
+    const newBest = Math.max(bestStreak, newStreak);
+    updateStore({
+      mastery: newMastery,
+      bestStreak: newBest
+    });
+    setResults(r => [...r, {
+      word: cw.word,
+      typed: input.trim(),
+      correct: ok,
+      category: cw.category,
+      prev,
+      next
+    }]);
+    setFeedback(ok ? 'correct' : 'wrong');
+    setStreak(newStreak);
+    if (ok) setSessionStreak(s => s + 1);
+    advance(ok ? 'correct' : 'wrong');
+  }, [input, cw, feedback, advance, mastery, streak, bestStreak]);
+  const skip = useCallback(() => {
+    if (feedback || !cw) return;
+    const key = cw.word.toLowerCase();
+    const prev = getMasteryLevel(mastery, cw.word);
+    const next = Math.max(0, prev - 1);
+    updateStore({
+      mastery: {
+        ...mastery,
+        [key]: next
+      }
+    });
+    setResults(r => [...r, {
+      word: cw.word,
+      typed: '(skipped)',
+      correct: false,
+      category: cw.category,
+      prev,
+      next
+    }]);
+    setStreak(0);
+    advance('wrong');
+  }, [cw, feedback, advance, mastery]);
+  function addCustomWord() {
+    if (!newWord.trim()) return;
+    const w = {
+      word: newWord.trim(),
+      hint: newHint.trim() || 'Your personal word',
+      category: 'Your Typos'
+    };
+    const next = [...customWords, w];
+    setCustomWords(next);
+    updateStore({
+      customWords: next
+    });
+    setNewWord('');
+    setNewHint('');
+  }
+  function removeCustomWord(word) {
+    const next = customWords.filter(w => w.word !== word);
+    setCustomWords(next);
+    updateStore({
+      customWords: next
+    });
+  }
+
+  // Computed stats
+  const score = results.filter(r => r.correct).length;
+  const pct = results.length ? Math.round(score / results.length * 100) : 0;
+  const masteredCount = allWords.filter(w => getMasteryLevel(mastery, w.word) >= 5).length;
+  const learningCount = allWords.filter(w => {
+    const l = getMasteryLevel(mastery, w.word);
+    return l > 0 && l < 5;
+  }).length;
+  const newCount = allWords.filter(w => getMasteryLevel(mastery, w.word) === 0).length;
+
+  // ── HOME SCREEN ────────────────────────────────────────────────────────────
+  if (screen === 'home') return /*#__PURE__*/React.createElement("div", {
+    style: S.root
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.bg
+  }), /*#__PURE__*/React.createElement("div", {
+    style: S.card
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.badge
+  }, "WORDWORK"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    style: S.iconBtn,
+    onClick: () => setScreen('stats'),
+    title: "Progress"
+  }, "\uD83D\uDCCA"), /*#__PURE__*/React.createElement("button", {
+    style: S.iconBtn,
+    onClick: () => setShowSettings(s => !s),
+    title: "Settings"
+  }, "\u2699\uFE0F"))), showSettings && /*#__PURE__*/React.createElement("div", {
+    style: S.panel
+  }, /*#__PURE__*/React.createElement("p", {
+    style: S.panelLabel
+  }, "Voice"), /*#__PURE__*/React.createElement("select", {
+    style: S.select,
+    value: selectedVoice?.name || '',
+    onChange: e => {
+      const v = voices.find(v => v.name === e.target.value);
+      setSelectedVoice(v);
+      updateStore({
+        voiceName: v?.name
+      });
+    }
+  }, voices.length === 0 && /*#__PURE__*/React.createElement("option", null, "Loading voices\u2026"), voices.map(v => /*#__PURE__*/React.createElement("option", {
+    key: v.name,
+    value: v.name
+  }, v.name))), /*#__PURE__*/React.createElement("p", {
+    style: S.panelLabel
+  }, "Speed: ", Math.round(voiceRate * 100), "%"), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0.5",
+    max: "1.2",
+    step: "0.05",
+    value: voiceRate,
+    onChange: e => {
+      const r = parseFloat(e.target.value);
+      setVoiceRate(r);
+      updateStore({
+        voiceRate: r
+      });
+    },
+    style: {
+      width: '100%',
+      accentColor: '#7c3aed'
+    }
+  }), /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...S.ghostBtn,
+      padding: '9px 14px',
+      fontSize: 13
+    },
+    onClick: () => doSpeak('Testing your selected voice. How does this sound?')
+  }, "\uD83D\uDD0A Test voice")), /*#__PURE__*/React.createElement("h1", {
+    style: S.title
+  }, "Your Spelling", /*#__PURE__*/React.createElement("br", null), "Coach"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.statBox
+  }, /*#__PURE__*/React.createElement("span", {
+    style: S.statNum
+  }, allWords.length), /*#__PURE__*/React.createElement("span", {
+    style: S.statLbl
+  }, "total")), /*#__PURE__*/React.createElement("div", {
+    style: S.statBox
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      ...S.statNum,
+      color: '#818cf8'
+    }
+  }, masteredCount), /*#__PURE__*/React.createElement("span", {
+    style: S.statLbl
+  }, "mastered")), /*#__PURE__*/React.createElement("div", {
+    style: S.statBox
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      ...S.statNum,
+      color: '#fbbf24'
+    }
+  }, bestStreak), /*#__PURE__*/React.createElement("span", {
+    style: S.statLbl
+  }, "best streak")), /*#__PURE__*/React.createElement("div", {
+    style: S.statBox
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      ...S.statNum,
+      color: '#34d399'
+    }
+  }, totalSessions), /*#__PURE__*/React.createElement("span", {
+    style: S.statLbl
+  }, "sessions"))), /*#__PURE__*/React.createElement("div", {
+    style: S.catGrid
+  }, CATEGORIES.map(cat => {
+    const count = cat === 'All' ? allWords.length : allWords.filter(w => w.category === cat).length;
+    const c = COL[cat] || COL['Classic'];
+    const active = selCat === cat;
+    return /*#__PURE__*/React.createElement("button", {
+      key: cat,
+      onClick: () => setSelCat(cat),
+      style: {
+        ...S.catBtn,
+        background: active ? c.bg : 'rgba(255,255,255,0.03)',
+        border: `1px solid ${active ? c.border : 'rgba(255,255,255,0.07)'}`,
+        color: active ? c.text : 'rgba(255,255,255,0.32)'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        fontFamily: 'monospace'
+      }
+    }, cat), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 18,
+        fontFamily: 'monospace'
+      }
+    }, count));
+  })), /*#__PURE__*/React.createElement("button", {
+    style: S.primaryBtn,
+    onClick: startPractice
+  }, "Start ", selCat === 'All' ? 'Smart' : selCat, " Practice \u2192"), /*#__PURE__*/React.createElement("button", {
+    style: S.ghostBtn,
+    onClick: () => setScreen('manage')
+  }, "+ Manage Words")));
+
+  // ── PRACTICE SCREEN ────────────────────────────────────────────────────────
+  if (screen === 'practice' && cw) {
+    const c = COL[cw.category] || COL['Classic'];
+    const lv = getMasteryLevel(mastery, cw.word);
+    const ml = MASTERY[lv];
+    const bc = feedback === 'correct' ? '#4ade80' : feedback === 'wrong' ? '#f87171' : 'rgba(255,255,255,0.12)';
+    return /*#__PURE__*/React.createElement("div", {
+      style: S.root
+    }, /*#__PURE__*/React.createElement("div", {
+      style: S.bg
+    }), /*#__PURE__*/React.createElement("div", {
+      style: {
+        ...S.card,
+        gap: 0,
+        padding: '26px 24px 22px'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: S.progTrack
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        ...S.progFill,
+        width: `${qIdx / queue.length * 100}%`
+      }
+    })), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 7,
+        marginBottom: 18,
+        flexWrap: 'wrap'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: S.counter
+    }, qIdx + 1, " / ", queue.length), /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...S.pill,
+        background: c.bg,
+        border: `1px solid ${c.border}`,
+        color: c.text
+      }
+    }, cw.category), /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...S.pill,
+        background: ml.bg,
+        border: `1px solid ${ml.border}`,
+        color: ml.color,
+        fontSize: 10
+      }
+    }, ml.emoji, " ", ml.label), streak >= 2 && /*#__PURE__*/React.createElement("span", {
+      style: S.streak
+    }, "\uD83D\uDD25 ", streak)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 10,
+        padding: '14px 0 16px'
+      }
+    }, /*#__PURE__*/React.createElement("button", {
+      style: S.hearBtn,
+      onClick: () => doSpeak(cw.word)
+    }, /*#__PURE__*/React.createElement("svg", {
+      width: "16",
+      height: "16",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: "2.5",
+      strokeLinecap: "round",
+      strokeLinejoin: "round"
+    }, /*#__PURE__*/React.createElement("polygon", {
+      points: "11 5 6 9 2 9 2 15 6 15 11 19 11 5"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M19.07 4.93a10 10 0 0 1 0 14.14"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M15.54 8.46a5 5 0 0 1 0 7.07"
+    })), "Hear it again"), /*#__PURE__*/React.createElement("p", {
+      style: S.hintText
+    }, "\uD83D\uDCA1 ", cw.hint)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        position: 'relative',
+        border: `1.5px solid ${bc}`,
+        borderRadius: 12,
+        overflow: 'hidden',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
+        boxShadow: feedback === 'correct' ? '0 0 0 3px rgba(74,222,128,0.14)' : feedback === 'wrong' ? '0 0 0 3px rgba(248,113,113,0.14)' : 'none'
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      ref: inputRef,
+      style: S.input,
+      value: input,
+      onChange: e => setInput(e.target.value),
+      onKeyDown: e => e.key === 'Enter' && check(),
+      placeholder: "Type the word\u2026",
+      autoComplete: "off",
+      autoCorrect: "off",
+      autoCapitalize: "off",
+      spellCheck: "false",
+      disabled: !!feedback,
+      inputMode: "text"
+    }), feedback === 'correct' && /*#__PURE__*/React.createElement("span", {
+      style: {
+        position: 'absolute',
+        right: 14,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        color: '#4ade80',
+        fontSize: 20
+      }
+    }, "\u2713"), feedback === 'wrong' && /*#__PURE__*/React.createElement("span", {
+      style: {
+        position: 'absolute',
+        right: 14,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        color: '#f87171',
+        fontSize: 20
+      }
+    }, "\u2717")), feedback === 'wrong' && /*#__PURE__*/React.createElement("div", {
+      style: {
+        textAlign: 'center',
+        fontSize: 13,
+        color: 'rgba(255,255,255,0.38)',
+        fontFamily: 'monospace',
+        marginTop: 9,
+        letterSpacing: '0.02em'
+      }
+    }, "Correct: ", /*#__PURE__*/React.createElement("strong", {
+      style: {
+        color: '#e9d5ff',
+        letterSpacing: '0.1em'
+      }
+    }, cw.word)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        gap: 10,
+        marginTop: 14
+      }
+    }, /*#__PURE__*/React.createElement("button", {
+      style: S.revealBtn,
+      onClick: () => {
+        setRevealed(true);
+        doSpeak(cw.word);
+      }
+    }, revealed ? /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: '#e9d5ff',
+        fontFamily: 'monospace',
+        letterSpacing: '0.14em'
+      }
+    }, cw.word) : 'Reveal'), /*#__PURE__*/React.createElement("button", {
+      style: S.submitBtn,
+      onClick: check,
+      disabled: !!feedback
+    }, "Check \u2192")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 2
+      }
+    }, /*#__PURE__*/React.createElement("button", {
+      style: S.skipLink,
+      onClick: skip
+    }, "skip"), /*#__PURE__*/React.createElement("button", {
+      style: S.skipLink,
+      onClick: () => setScreen('home')
+    }, "quit"))));
+  }
+
+  // ── RESULTS SCREEN ─────────────────────────────────────────────────────────
+  if (screen === 'results') {
+    const missed = results.filter(r => !r.correct);
+    const improved = results.filter(r => r.next > r.prev);
+    return /*#__PURE__*/React.createElement("div", {
+      style: S.root
+    }, /*#__PURE__*/React.createElement("div", {
+      style: S.bg
+    }), /*#__PURE__*/React.createElement("div", {
+      style: {
+        ...S.card,
+        maxWidth: 500,
+        animation: 'fadeIn 0.3s ease'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '14px 0 16px',
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        marginBottom: 12
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 68,
+        fontWeight: 400,
+        lineHeight: 1,
+        color: pct >= 80 ? '#4ade80' : pct >= 60 ? '#fcd34d' : '#f87171'
+      }
+    }, pct, "%"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 13,
+        color: 'rgba(255,255,255,0.33)',
+        fontFamily: 'monospace',
+        marginTop: 6
+      }
+    }, score, " of ", results.length, " correct"), sessionStreak > 1 && /*#__PURE__*/React.createElement("span", {
+      style: {
+        marginTop: 8,
+        fontSize: 13,
+        color: '#fbbf24'
+      }
+    }, "\uD83D\uDD25 Streak of ", sessionStreak, " this round"), improved.length > 0 && /*#__PURE__*/React.createElement("span", {
+      style: {
+        marginTop: 6,
+        fontSize: 12,
+        color: '#34d399'
+      }
+    }, "\uD83D\uDCC8 ", improved.length, " word", improved.length > 1 ? 's' : '', " leveled up")), missed.length > 0 ? /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 6,
+        maxHeight: 260,
+        overflowY: 'auto'
+      }
+    }, /*#__PURE__*/React.createElement("p", {
+      style: S.sectionLabel
+    }, "Study these \uD83D\uDC47"), missed.map((r, i) => /*#__PURE__*/React.createElement("div", {
+      key: i,
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        background: 'rgba(248,113,113,0.06)',
+        border: '1px solid rgba(248,113,113,0.12)',
+        borderRadius: 8,
+        padding: '10px 12px',
+        gap: 10
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        minWidth: 0
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        display: 'block',
+        color: '#fda4af',
+        fontSize: 15
+      }
+    }, r.word), /*#__PURE__*/React.createElement("span", {
+      style: {
+        display: 'block',
+        color: 'rgba(255,255,255,0.23)',
+        fontSize: 11,
+        fontFamily: 'monospace',
+        marginTop: 2
+      }
+    }, "you wrote: \"", r.typed, "\"")), /*#__PURE__*/React.createElement("button", {
+      style: {
+        ...S.hearBtn,
+        padding: '7px 11px',
+        fontSize: 12,
+        flexShrink: 0
+      },
+      onClick: () => doSpeak(r.word)
+    }, "\uD83D\uDD0A")))) : /*#__PURE__*/React.createElement("p", {
+      style: {
+        color: '#4ade80',
+        textAlign: 'center',
+        fontSize: 16,
+        padding: '16px 0'
+      }
+    }, "Perfect round! \uD83C\uDF89"), /*#__PURE__*/React.createElement("button", {
+      style: S.primaryBtn,
+      onClick: startPractice
+    }, "Practice Again \u2192"), /*#__PURE__*/React.createElement("button", {
+      style: S.ghostBtn,
+      onClick: () => setScreen('home')
+    }, "\u2190 Home")));
+  }
+
+  // ── STATS SCREEN ───────────────────────────────────────────────────────────
+  if (screen === 'stats') {
+    const levels = MASTERY.map((m, i) => ({
+      ...m,
+      count: allWords.filter(w => getMasteryLevel(mastery, w.word) === i).length
+    }));
+    return /*#__PURE__*/React.createElement("div", {
+      style: S.root
+    }, /*#__PURE__*/React.createElement("div", {
+      style: S.bg
+    }), /*#__PURE__*/React.createElement("div", {
+      style: {
+        ...S.card,
+        maxWidth: 460
+      }
+    }, /*#__PURE__*/React.createElement("button", {
+      style: S.backLink,
+      onClick: () => setScreen('home')
+    }, "\u2190 Back"), /*#__PURE__*/React.createElement("h2", {
+      style: {
+        margin: 0,
+        fontSize: 24,
+        fontWeight: 400,
+        color: '#f5f3ff'
+      }
+    }, "Your Progress"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: 6
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: S.sectionLabel
+    }, "Mastery overview"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...S.sectionLabel,
+        color: '#818cf8'
+      }
+    }, masteredCount, "/", allWords.length, " mastered")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        height: 8,
+        background: 'rgba(255,255,255,0.07)',
+        borderRadius: 4,
+        overflow: 'hidden'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        height: '100%',
+        width: `${masteredCount / allWords.length * 100}%`,
+        background: 'linear-gradient(90deg, #7c3aed, #818cf8)',
+        borderRadius: 4,
+        transition: 'width 0.4s ease'
+      }
+    }))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8
+      }
+    }, levels.map(l => /*#__PURE__*/React.createElement("div", {
+      key: l.label,
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...S.pill,
+        background: l.bg,
+        border: `1px solid ${l.border}`,
+        color: l.color,
+        minWidth: 90,
+        textAlign: 'center'
+      }
+    }, l.emoji, " ", l.label), /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        height: 6,
+        background: 'rgba(255,255,255,0.07)',
+        borderRadius: 3,
+        overflow: 'hidden'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        height: '100%',
+        width: `${l.count / allWords.length * 100}%`,
+        background: l.color,
+        borderRadius: 3,
+        opacity: 0.8
+      }
+    })), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontFamily: 'monospace',
+        fontSize: 12,
+        color: l.color,
+        minWidth: 24,
+        textAlign: 'right'
+      }
+    }, l.count)))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 8,
+        marginTop: 4
+      }
+    }, [{
+      label: 'Sessions completed',
+      value: totalSessions,
+      color: '#34d399'
+    }, {
+      label: 'Best streak ever',
+      value: `🔥 ${bestStreak}`,
+      color: '#fbbf24'
+    }, {
+      label: 'Words in progress',
+      value: learningCount,
+      color: '#fb923c'
+    }, {
+      label: 'Not yet seen',
+      value: newCount,
+      color: '#94a3b8'
+    }].map(s => /*#__PURE__*/React.createElement("div", {
+      key: s.label,
+      style: {
+        ...S.statBox,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: '12px 14px'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: 'rgba(255,255,255,0.4)',
+        fontFamily: 'monospace'
+      }
+    }, s.label), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 16,
+        color: s.color,
+        fontFamily: 'monospace'
+      }
+    }, s.value)))), /*#__PURE__*/React.createElement("button", {
+      style: {
+        ...S.ghostBtn,
+        fontSize: 12,
+        color: 'rgba(248,113,113,0.5)',
+        borderColor: 'rgba(248,113,113,0.15)'
+      },
+      onClick: () => {
+        if (window.confirm('Reset ALL mastery progress? This cannot be undone.')) updateStore({
+          mastery: {},
+          bestStreak: 0,
+          totalSessions: 0
+        });
+      }
+    }, "Reset all progress")));
+  }
+
+  // ── MANAGE SCREEN ──────────────────────────────────────────────────────────
+  if (screen === 'manage') return /*#__PURE__*/React.createElement("div", {
+    style: S.root
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.bg
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      ...S.card,
+      maxWidth: 500
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    style: S.backLink,
+    onClick: () => setScreen('home')
+  }, "\u2190 Back"), /*#__PURE__*/React.createElement("h2", {
+    style: {
+      margin: 0,
+      fontSize: 24,
+      fontWeight: 400,
+      color: '#f5f3ff'
+    }
+  }, "Word List"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: 'rgba(255,255,255,0.3)',
+      fontSize: 12,
+      fontFamily: 'monospace',
+      margin: '-8px 0 0'
+    }
+  }, allWords.length, " words total \u2014 custom words added below"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    style: S.smallInput,
+    value: newWord,
+    onChange: e => setNewWord(e.target.value),
+    placeholder: "Word\u2026",
+    autoCorrect: "off",
+    spellCheck: "false",
+    onKeyDown: e => e.key === 'Enter' && addCustomWord()
+  }), /*#__PURE__*/React.createElement("input", {
+    style: S.smallInput,
+    value: newHint,
+    onChange: e => setNewHint(e.target.value),
+    placeholder: "Hint (optional)",
+    onKeyDown: e => e.key === 'Enter' && addCustomWord()
+  }), /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...S.primaryBtn,
+      padding: '10px 16px',
+      fontSize: 14,
+      boxShadow: 'none',
+      minWidth: 58
+    },
+    onClick: addCustomWord
+  }, "Add")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 5,
+      maxHeight: 420,
+      overflowY: 'auto'
+    }
+  }, allWords.map(w => {
+    const c = COL[w.category] || COL['Classic'];
+    const lv = getMasteryLevel(mastery, w.word);
+    const ml = MASTERY[lv];
+    const isCu = customWords.some(c => c.word === w.word);
+    return /*#__PURE__*/React.createElement("div", {
+      key: w.word,
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: 8,
+        padding: '9px 12px',
+        gap: 8
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        minWidth: 0
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6,
+        flexWrap: 'wrap'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: '#e9d5ff',
+        fontSize: 14
+      }
+    }, w.word), /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...S.pill,
+        background: ml.bg,
+        border: `1px solid ${ml.border}`,
+        color: ml.color,
+        fontSize: 9,
+        padding: '1px 6px'
+      }
+    }, ml.emoji, " ", ml.label)), /*#__PURE__*/React.createElement("span", {
+      style: {
+        display: 'block',
+        color: 'rgba(255,255,255,0.24)',
+        fontSize: 11,
+        fontFamily: 'monospace',
+        marginTop: 2,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+      }
+    }, w.hint)), /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...S.pill,
+        background: c.bg,
+        border: `1px solid ${c.border}`,
+        color: c.text,
+        fontSize: 10,
+        padding: '2px 7px',
+        flexShrink: 0
+      }
+    }, w.category), isCu && /*#__PURE__*/React.createElement("button", {
+      style: S.removeBtn,
+      onClick: () => removeCustomWord(w.word)
+    }, "\xD7"));
+  }))));
+  return null;
+}
+
+// ── STYLES ───────────────────────────────────────────────────────────────────
+const S = {
+  root: {
+    minHeight: '100dvh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: "'Georgia', serif",
+    background: '#0a0a0c',
+    padding: '20px 14px'
+  },
+  bg: {
+    position: 'fixed',
+    inset: 0,
+    background: 'radial-gradient(ellipse 90% 55% at 50% -5%, #160d2e 0%, #0a0a0c 65%)',
+    zIndex: 0,
+    pointerEvents: 'none'
+  },
+  card: {
+    position: 'relative',
+    zIndex: 1,
+    background: 'rgba(255,255,255,0.03)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: 22,
+    padding: '28px 24px',
+    width: '100%',
+    maxWidth: 460,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
+    boxShadow: '0 40px 100px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06)'
+  },
+  badge: {
+    display: 'inline-block',
+    background: 'rgba(139,92,246,0.18)',
+    border: '1px solid rgba(139,92,246,0.32)',
+    color: '#c4b5fd',
+    borderRadius: 6,
+    padding: '4px 12px',
+    fontSize: 10,
+    fontFamily: 'monospace',
+    letterSpacing: '0.18em'
+  },
+  title: {
+    margin: 0,
+    fontSize: 32,
+    fontWeight: 400,
+    color: '#f5f3ff',
+    letterSpacing: '-0.5px',
+    lineHeight: 1.15
+  },
+  catGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: 8
+  },
+  catBtn: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 10,
+    padding: '12px 14px',
+    cursor: 'pointer',
+    transition: 'all 0.15s',
+    minHeight: 48
+  },
+  pill: {
+    display: 'inline-block',
+    borderRadius: 20,
+    padding: '3px 10px',
+    fontSize: 11,
+    fontFamily: 'monospace',
+    letterSpacing: '0.04em',
+    whiteSpace: 'nowrap'
+  },
+  primaryBtn: {
+    background: 'linear-gradient(135deg, #7c3aed, #5b21b6)',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 12,
+    padding: '16px 28px',
+    fontSize: 16,
+    fontFamily: "'Georgia', serif",
+    cursor: 'pointer',
+    boxShadow: '0 4px 24px rgba(109,40,217,0.38)',
+    minHeight: 52
+  },
+  ghostBtn: {
+    background: 'transparent',
+    color: 'rgba(255,255,255,0.35)',
+    border: '1px solid rgba(255,255,255,0.09)',
+    borderRadius: 12,
+    padding: '13px 28px',
+    fontSize: 14,
+    fontFamily: "'Georgia', serif",
+    cursor: 'pointer',
+    minHeight: 48
+  },
+  iconBtn: {
+    background: 'rgba(255,255,255,0.05)',
+    border: '1px solid rgba(255,255,255,0.09)',
+    borderRadius: 8,
+    padding: '8px 10px',
+    cursor: 'pointer',
+    fontSize: 15
+  },
+  panel: {
+    background: 'rgba(255,255,255,0.04)',
+    border: '1px solid rgba(255,255,255,0.09)',
+    borderRadius: 12,
+    padding: '14px 16px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10
+  },
+  panelLabel: {
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.38)',
+    fontFamily: 'monospace',
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase'
+  },
+  select: {
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: 8,
+    padding: '9px 10px',
+    color: '#f5f3ff',
+    fontSize: 13,
+    cursor: 'pointer',
+    outline: 'none'
+  },
+  statBox: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    background: 'rgba(255,255,255,0.03)',
+    border: '1px solid rgba(255,255,255,0.06)',
+    borderRadius: 10,
+    padding: '10px 8px',
+    gap: 3
+  },
+  statNum: {
+    fontSize: 20,
+    fontWeight: 400,
+    color: '#f5f3ff',
+    fontFamily: 'monospace'
+  },
+  statLbl: {
+    fontSize: 9,
+    color: 'rgba(255,255,255,0.3)',
+    fontFamily: 'monospace',
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase'
+  },
+  progTrack: {
+    height: 2,
+    background: 'rgba(255,255,255,0.07)',
+    borderRadius: 2,
+    marginBottom: 18,
+    overflow: 'hidden'
+  },
+  progFill: {
+    height: '100%',
+    background: 'linear-gradient(90deg, #7c3aed, #a78bfa)',
+    borderRadius: 2,
+    transition: 'width 0.4s ease'
+  },
+  counter: {
+    fontFamily: 'monospace',
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.25)',
+    letterSpacing: '0.1em',
+    marginRight: 'auto'
+  },
+  streak: {
+    fontSize: 12,
+    color: '#fbbf24',
+    background: 'rgba(251,191,36,0.1)',
+    border: '1px solid rgba(251,191,36,0.22)',
+    borderRadius: 20,
+    padding: '2px 8px'
+  },
+  hearBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    background: 'rgba(139,92,246,0.12)',
+    border: '1px solid rgba(139,92,246,0.28)',
+    color: '#c4b5fd',
+    borderRadius: 40,
+    padding: '11px 22px',
+    fontSize: 14,
+    fontFamily: "'Georgia', serif",
+    cursor: 'pointer',
+    minHeight: 44
+  },
+  hintText: {
+    margin: 0,
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.27)',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    maxWidth: 300,
+    lineHeight: 1.55
+  },
+  input: {
+    width: '100%',
+    background: 'rgba(255,255,255,0.05)',
+    border: 'none',
+    outline: 'none',
+    padding: '18px 48px 18px 18px',
+    fontSize: 20,
+    color: '#f5f3ff',
+    fontFamily: "'Georgia', serif",
+    textAlign: 'center',
+    letterSpacing: '0.05em',
+    boxSizing: 'border-box',
+    minHeight: 58
+  },
+  revealBtn: {
+    flex: 1,
+    background: 'rgba(255,255,255,0.04)',
+    border: '1px solid rgba(255,255,255,0.09)',
+    borderRadius: 10,
+    padding: '14px',
+    color: 'rgba(255,255,255,0.38)',
+    fontSize: 14,
+    fontFamily: 'monospace',
+    cursor: 'pointer',
+    minHeight: 50
+  },
+  submitBtn: {
+    flex: 2,
+    background: 'linear-gradient(135deg, #7c3aed, #5b21b6)',
+    border: 'none',
+    borderRadius: 10,
+    padding: '14px',
+    color: '#fff',
+    fontSize: 15,
+    fontFamily: "'Georgia', serif",
+    cursor: 'pointer',
+    boxShadow: '0 4px 16px rgba(109,40,217,0.28)',
+    minHeight: 50
+  },
+  skipLink: {
+    background: 'none',
+    border: 'none',
+    color: 'rgba(255,255,255,0.18)',
+    fontSize: 12,
+    cursor: 'pointer',
+    fontFamily: 'monospace',
+    letterSpacing: '0.05em',
+    textDecoration: 'underline',
+    padding: '8px',
+    minHeight: 36
+  },
+  backLink: {
+    background: 'none',
+    border: 'none',
+    color: 'rgba(255,255,255,0.33)',
+    fontSize: 13,
+    cursor: 'pointer',
+    alignSelf: 'flex-start',
+    fontFamily: 'monospace',
+    padding: 0
+  },
+  smallInput: {
+    flex: 1,
+    minWidth: 110,
+    background: 'rgba(255,255,255,0.05)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: 8,
+    padding: '10px 12px',
+    color: '#f5f3ff',
+    fontSize: 14,
+    fontFamily: "'Georgia', serif",
+    outline: 'none',
+    boxSizing: 'border-box'
+  },
+  removeBtn: {
+    background: 'rgba(248,113,113,0.08)',
+    border: '1px solid rgba(248,113,113,0.16)',
+    color: '#f87171',
+    borderRadius: 6,
+    width: 28,
+    height: 28,
+    cursor: 'pointer',
+    fontSize: 17,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0
+  },
+  sectionLabel: {
+    margin: 0,
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.28)',
+    fontFamily: 'monospace',
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase'
+  }
+};
+
+// Mount
+ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(SpellingApp, null));
+  </script>
+</body>
+</html>
