@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      <meta name="theme-color" content="#0a0a0c" />
+      <title>WordWork — Spelling Coach</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+          *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+          html { height: 100%; -webkit-text-size-adjust: 100%; }
+          body { height: 100%; background: #0a0a0c; overscroll-behavior: none; -webkit-font-smoothing: antialiased; }
+          input, button, select { font-family: inherit; -webkit-appearance: none; appearance: none; }
+          input[type="range"] { -webkit-appearance: auto; appearance: auto; }
+          ::-webkit-scrollbar { width: 3px; }
+          ::-webkit-scrollbar-track { background: transparent; }
+          ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+          @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.07); } 100% { transform: scale(1); } }
+          .pop { animation: pop 0.22s ease; }
+        </style>
+  </head>
+  <body>
+      <div id="root"></div>div>
+
+      <script type="text/babel">
+          const { useState, useRef, useCallback, useEffect, useMemo } = React;
+
+          // ── STORAGE ─────────────────────────────────────────────────────────────────
+          const STORAGE_KEY = 'wordwork_v3';
+          function loadStorage() {
+                try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+                catch { return {}; }
+          }
+          function saveStorage(data) {
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+          }
+
+          // ── MASTERY LEVELS ───────────────────────────────────────────────────────────
+          const MASTERY = [
+            { label: 'New',       emoji: '🌱', color: '#94a3b8', bg: 'rgba(148,163,184,0.1)',  border: 'rgba(148,163,184,0.22)' },
+            { label: 'Learning',  emoji: '🔥', color: '#f87171', bg: 'rgba(248,113,113,0.1)',  border: 'rgba(248,113,113,0.22)' },
+            { label: 'Familiar',  emoji: '⚡', color: '#fb923c', bg: 'rgba(251,146,60,0.1)',   border: 'rgba(251,146,60,0.22)' },
+            { label: 'Practiced', emoji: '💫', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)',   border: 'rgba(251,191,36,0.22)' },
+            { label: 'Confident', emoji: '✅', color: '#34d399', bg: 'rgba(52,211,153,0.1)',   border: 'rgba(52,211,153,0.22)' },
+            { label: 'Mastered',  emoji: '🏆', color: '#818cf8', bg: 'rgba(129,140,248,0.1)',  border: 'rgba(129,140,248,0.22)' },
+              ];
+
+          // ── CATEGORY COLORS ──────────────────────────────────────────────────────────
+          const COL = {
+                'Your Typos': { bg: 'rgba(251,113,133,0.13)', border: 'rgba(251,113,133,0.30)', text: '#fda4af' },
+                'Work':       { bg: 'rgba(251,191,36,0.10)',  border: 'rgba(251,191,36,0.26)',  text: '#fcd34d' },
+                'Classic':    { bg: 'rgba(139,92,246,0.13)',  border: 'rgba(139,92,246,0.30)',  text: '#c4b5fd' },
+                'Confused':   { bg: 'rgba(56,189,248,0.11)',  border: 'rgba(56,189,248,0.26)',  text: '#7dd3fc' },
+          };
+
+          // ── WORD LIST ────────────────────────────────────────────────────────────────
+          const ALL_WORDS = [
+                // 🔴 YOUR TYPOS — caught directly from your messages and chats
+            { word: "additional",      hint: "You wrote 'addtional' — add·ition·al, four syllables", category: "Your Typos" },
+            { word: "practice",        hint: "You wrote 'pactice' — prac·TICE, don't drop the R", category: "Your Typos" },
+            { word: "purposeful",      hint: "You wrote 'purpouseful' — pur·POSE·ful, no extra O", category: "Your Typos" },
+            { word: "misspelled",      hint: "You wrote 'miss spelled' — one word, double S: mis·SPELLED", category: "Your Typos" },
+            { word: "Ballinger",       hint: "The legal firm — not 'Berlinger'", category: "Your Typos" },
+            { word: "separating",      hint: "You wrote 'speerating' — there's a RAT in sepa·RAT·ing", category: "Your Typos" },
+            { word: "continue",        hint: "You wrote 'continuy' — con·TIN·ue, ends in -ue", category: "Your Typos" },
+            { word: "doesn't",         hint: "You wrote 'dosent' — does + n't, the O stays", category: "Your Typos" },
+            { word: "everything",      hint: "You wrote 'everyting' — every + THING, don't drop the H", category: "Your Typos" },
+            { word: "straightforward", hint: "Straight + forward, no extra letters anywhere", category: "Your Typos" },
+            { word: "Excellerate",     hint: "Your JPMC microlearning platform — Excel + erate", category: "You<r! DTOyCpToYsP"E  }h,t
+            m l > 
+             <{h twmolr dl:a n"go=p"peonr"t>u
+               n<ihteya"d,> 
+                    < mheitnat :c h"aorps·epto=r"·TUUTNF·-i8t"y  /— >d
+               o u b<lmee tPa,  neaamsey= "tvoi emwipsosr"t,"  ccaotnetgeonrty=:" w"iYdotuhr= dTeyvpiocse"- w}i,d
+               t h ,   i{n iwtoiradl:- s"cdaelfei=n1i.t0e,l ym"a,x i m u m - shcianlte:= 1".N0o,t  u'sdeerf-isncaatlealbyl'e =—n oF"I N/I>T
+               E   i<sm ehtiad innagm ei=n"saipdpel ei-tm:o bdiel·FeI-NwIeTbE-·alpyp"-,c acpaatbelgeo"r yc:o n"tYeonutr= "Tyyepso"s "/ >}
+               , 
+                 < m e t{a  wnoarmde:= ""abpapsliec-amlolbyi"l,e - w e b - a phpi-nstt:a t"ubsa-sbiacr -+s tayllley"  — cnoontt e'nbta=s"ibcllayc'k,- tnreaendssl utcheen tf"u l/l> 
+               ' a l<lmye't"a,  ncaamtee=g"otrhye:m e"-Ycooulro rT"y pcoosn"t e}n,t
+               = " # 0 a{0 aw0ocr"d :/ >"
+               p r o<btaibtllye">,W o r d W o r k  h— iSnpte:l l"ipnrgo bC o+a cahb<l/yt i— tnloet> 
+               ' p r<osbcarliyp't,  ctrhorseseo rsiyglilna bslrecs="",h tctaptse:g/o/ruyn:p k"gY.ocuorm /Tryepaocst"@ 1}8,/
+               u m d / r{e awcotr.dp:r o"dbuucstiinoens.sm"i,n . j s " > < / shcirnitp:t >"
+                 b u s<is·cnreispst  — ctrhoes sIo rsiogfitne nssr:c ='"bhitztnpess:s/'/ ubnuptk gs.pceolml/erde awcitt-hd oUmI@"1,8 /cuamtde/groerayc:t -"dYoomu.rp rToydpuocst"i o}n,.
+                 m i n . j{s "w>o<r/ds:c r"ibpetc>a
+                 u s e<"s,c r i p t   s r c =h"ihnttt:p s":b/e/ u+n pckagu.sceo m—/ @nboatb e'lb/esctuaansdea'l,o nteh/eb aAb eclo.mmeisn .bjesf"o>r<e/ sUc"r,i pcta>t
+                   e g o<rsyt:y l"eY>o
+                   u r   T y*p,o s*": :}b,e
+                   f o r e ,{  *w:o:radf:t e"rr e{c ebiovxe-"s,i z i n g :   b o rhdienrt-:b o"xI;  bmeafrogrien :E  0e;x cpeapdtd ianfgt:e r0 ;C  }— 
+                   r e · C EhItVmEl" ,{  chaetiegghotr:y :1 0"0Y%o;u r- wTeybpkoist"- t}e,x
+                   t - s i z{e -waodrjdu:s t":h o1n0e0s%t;l y}"
+                   ,        b o d y  h{i nhte:i g"hhto:n e1s0t0 %+;  lbya c— ksgirloeunntd :H ,# 0dao0na'0tc ;f oorvgeerts ctrhoel lE-:b ehhoanv·iEoSrT:·l yn"o,n ec;a t-ewgeobrkyi:t -"fYoonutr- sTmyopootsh"i n}g,:
+                     a n t i{a lwioarsde:d ;" s}e
+                   p a r a tien"p,u t ,   b u t t ohni,n ts:e l"eTchte r{e 'fso nat -RfAaTm iilny :s eipnah·eRrAiTt·e;  —- wneobtk i'ts-eappepreaatrea'n"c,e :c antoengeo;r ya:p p"eYaoruarn cTey:p onso"n e};, 
+                   } 
+                   {  iwnoprudt:[ t"yapcet=u"arlalnyg"e," ]   {   - w e bhkiintt-:a p"paecatruaanlc e+:  layu t— on;o ta p'paecatruaanlcye':,  akueteop;  t}h
+                   e   f u l:l: -'waecbtkuiatl-'s"c,r oclaltbeagro r{y :w i"dYtohu:r  3Tpyxp;o s}"
+                   } , 
+                     : : - w{e bwkoirtd-:s c"riomlplobratra-nttr"a,c k   {   b a chkignrto:u n"di:m ·tPrOaRnTs·apnatr e—n tn;o t} 
+                   ' i m p o:r:t-ewnetb'k,i te-nsdcsr oilnl b-aarn-tt hnuomtb  -{e nbta"c,k gcraotuengdo:r yr:g b"aY(o2u5r5 ,T2y5p5o,s2"5 5},,0
+                   . 1 2 ) ;{  bwoorrdde:r -"rdaidfifuesr:e n2tp"x,;   } 
+                           h@iknety:f r"admiefsf efra d+e Ienn t{  — fnrootm  '{d iofpfarceintty':,  0f;o utrr asnyslfloarbml:e st"r,a ncsaltaetgeoYr(y6:p x")Y;o u}r  tToy p{o so"p a}c,i
+                   t y :   1{;  wtorradn:s f"onremc:e stsraarnys"l,a t e Y ( 0 ) ;h i}n t}:
+                     " O n e@ kCeoylflraarm etsw op oSpo c{k s0 %—  {1  tCr,a n2s fSo'rsm::  nsecca·ElSe·(S1a)r;y "},  5c0a%t e{g otrrya:n s"fYoorumr:  Tsycpaolse"( 1}.,07); } 100% { transform: scale(1); } }
+                       .pop { animation: pop 0.22s ease; }
+                 </style>
+             </head>
+            <body>
+              <div id="root"></div>
+
+              <script type="text/babel">
+              const { useState, useRef, useCallback, useEffect, useMemo } = React;
+
+          // ── STORAGE ─────────────────────────────────────────────────────────────────
+          const STORAGE_KEY = 'wordwork_v3';
+          function loadStorage() {
+                try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+                catch { return {}; }
+          }
+          function saveStorage(data) {
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+          }
+
+          // ── MASTERY LEVELS ───────────────────────────────────────────────────────────
+          const MASTERY = [
+            { label: 'New',       emoji: '🌱', color: '#94a3b8', bg: 'rgba(148,163,184,0.1)',  border: 'rgba(148,163,184,0.22)' },
+            { label: 'Learning',  emoji: '🔥', color: '#f87171', bg: 'rgba(248,113,113,0.1)',  border: 'rgba(248,113,113,0.22)' },
+            { label: 'Familiar',  emoji: '⚡', color: '#fb923c', bg: 'rgba(251,146,60,0.1)',   border: 'rgba(251,146,60,0.22)' },
+            { label: 'Practiced', emoji: '💫', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)',   border: 'rgba(251,191,36,0.22)' },
+            { label: 'Confident', emoji: '✅', color: '#34d399', bg: 'rgba(52,211,153,0.1)',   border: 'rgba(52,211,153,0.22)' },
+            { label: 'Mastered',  emoji: '🏆', color: '#818cf8', bg: 'rgba(129,140,248,0.1)',  border: 'rgba(129,140,248,0.22)' },
+              ];
+
+          // ── CATEGORY COLORS ──────────────────────────────────────────────────────────
+          const COL = {
+                'Your Typos': { bg: 'rgba(251,113,133,0.13)', border: 'rgba(251,113,133,0.30)', text: '#fda4af' },
+                'Work':       { bg: 'rgba(251,191,36,0.10)',  border: 'rgba(251,191,36,0.26)',  text: '#fcd34d' },
+                'Classic':    { bg: 'rgba(139,92,246,0.13)',  border: 'rgba(139,92,246,0.30)',  text: '#c4b5fd' },
+                'Confused':   { bg: 'rgba(56,189,248,0.11)',  border: 'rgba(56,189,248,0.26)',  text: '#7dd3fc' },
+          };
+
+          // ── WORD LIST ────────────────────────────────────────────────────────────────
+          const ALL_WORDS = [
+                // 🔴 YOUR TYPOS — caught directly from your messages and chats
+            { word: "additional",      hint: "You wrote 'addtional' — add·ition·al, four syllables", category: "Your Typos" },
+            { word: "practice",        hint: "You wrote 'pactice' — prac·TICE, don't drop the R", category: "Your Typos" },
+            { word: "purposeful",      hint: "You wrote 'purpouseful' — pur·POSE·ful, no extra O", category: "Your Typos" },
+            { word: "misspelled",      hint: "You wrote 'miss spelled' — one word, double S: mis·SPELLED", category: "Your Typos" },
+            { word: "Ballinger",       hint: "The legal firm — not 'Berlinger'", category: "Your Typos" },
+            { word: "separating",      hint: "You wrote 'speerating' — there's a RAT in sepa·RAT·ing", category: "Your Typos" },
+            { word: "continue",        hint: "You wrote 'continuy' — con·TIN·ue, ends in -ue", category: "Your Typos" },
+            { word: "doesn't",         hint: "You wrote 'dosent' — does + n't, the O stays", category: "Your Typos" },
+            { word: "everything",      hint: "You wrote 'everyting' — every + THING, don't drop the H", category: "Your Typos" },
+            { word: "straightforward", hint: "Straight + forward, no extra letters anywhere", category: "Your Typos" },
+            { word: "Excellerate",     hint: "Your JPMC microlearning platform — Excel + erate", category: "Your Typos" },
+            { word: "opportunity",     hint: "op·por·TUN·ity — double P, easy to miss", category: "Your Typos" },
+            { word: "definitely",      hint: "Not 'definately' — FINITE is hiding inside it: de·FINITE·ly", category: "Your Typos" },
+            { word: "basically",       hint: "basic + ally — not 'basicly', needs the full 'ally'", category: "Your Typos" },
+            { word: "probably",        hint: "prob + ably — not 'probaly', three syllables", category: "Your Typos" },
+            { word: "business",        hint: "busi·ness — the I softens: 'bizness' but spelled with UI", category: "Your Typos" },
+            { word: "because",         hint: "be + cause — not 'becuase', the A comes before U", category: "Your Typos" },
+            { word: "receive",         hint: "I before E except after C — re·CEIVE", category: "Your Typos" },
+            { word: "honestly",        hint: "honest + ly — silent H, don't forget the E: hon·EST·ly", category: "Your Typos" },
+            { word: "separate",        hint: "There's a RAT in sepa·RAT·e — not 'seperate'", category: "Your Typos" },
+            { word: "actually",        hint: "actual + ly — not 'actualy', keep the full 'actual'", category: "Your Typos" },
+            { word: "important",       hint: "im·PORT·ant — not 'importent', ends in -ant not -ent", category: "Your Typos" },
+            { word: "different",       hint: "differ + ent — not 'diffrent', four syllables", category: "Your Typos" },
+            { word: "necessary",       hint: "One Collar two Socks — 1 C, 2 S's: nec·ES·Sary", category: "Your Typos" },
+
+                // 🟠 WORK — CCB / L&D / JPMC terms
+            { word: "microlearning",   hint: "Short, focused learning content — micro + learning", category: "Work" },
+            { word: "prioritization",  hint: "Ranking by importance — prior·ity + ization", category: "Work" },
+            { word: "consolidation",   hint: "Combining into one structure — con·solid·ation", category: "Work" },
+            { word: "governance",      hint: "Rules and oversight — govern + ance, no extra letters", category: "Work" },
+            { word: "architecture",    hint: "Structural design — archi·TEC·ture, not 'archetecture'", category: "Work" },
+            { word: "fragmented",      hint: "Broken into disconnected pieces — frag·MENT·ed", category: "Work" },
+            { word: "operational",     hint: "Day-to-day running — oper·ation + al", category: "Work" },
+            { word: "centralized",     hint: "Under one center of control — central + ized", category: "Work" },
+            { word: "stakeholder",     hint: "Someone with interest in outcome — stake + holder", category: "Work" },
+            { word: "triage",          hint: "Sorting by priority — French origin, tri·AGE", category: "Work" },
+            { word: "collaborative",   hint: "Done jointly — col·labor + ative, not 'colaborative'", category: "Work" },
+            { word: "infrastructure",  hint: "Underlying foundation — infra + structure, not 'infastructure'", category: "Work" },
+            { word: "efficiency",      hint: "Results without waste — ef·FICI·ency, double F", category: "Work" },
+            { word: "deliverable",     hint: "A tangible output — deliver + able", category: "Work" },
+            { word: "acknowledgment",  hint: "No 'e' after acknowledg in American English", category: "Work" },
+            { word: "curriculum",      hint: "Course of study — two R's: cur·RIC·ulum", category: "Work" },
+            { word: "facilitation",    hint: "Running a session — facil + itation, one L", category: "Work" },
+            { word: "assessment",      hint: "Two S's twice — as·SESS·ment", category: "Work" },
+            { word: "implementation",  hint: "Putting into action — implement + ation, not 'implemention'", category: "Work" },
+            { word: "communication",   hint: "Sharing information — two M's: com·MUN·ication", category: "Work" },
+            { word: "presentation",    hint: "Showing to an audience — present + ation, not 'presentaion'", category: "Work" },
+            { word: "organization",    hint: "Structure — organ + ization, not 'organziation'", category: "Work" },
+            { word: "professional",    hint: "Expert and polished — profess + ional, double S", category: "Work" },
+            { word: "development",     hint: "Growth or building — develop + ment, not 'developement'", category: "Work" },
+            { word: "engagement",      hint: "Active involvement — en·GAGE·ment", category: "Work" },
+            { word: "documentation",   hint: "Written records — document + ation, five syllables", category: "Work" },
+            { word: "coordination",    hint: "Working together — co + ordination, two O's side by side", category: "Work" },
+            { word: "measurement",     hint: "Quantifying results — measure + ment, not 'measurment'", category: "Work" },
+            { 
+              w
+                o r d :  /"/s u🟠 sWtOaRiKn a—b iClCiBt y/" ,L & Dh i/n tJ:P M"CL otnegr-mtse
+            r m   v i{a bwiolridt:y  "—m iscursotlaeianr n+i nagb"i,l i t yh,i nnto:t  "'Sshuosrtta,i nfiobciulsietdy 'l"e,a rcnaitnegg ocroyn:t e"nWto r—k "m i}c,r
+              o   +   l{e awronridn:g "",a cccaotuengtoarbyi:l i"tWyo"r,k "  h}i,n
+                t :   " T{a kwionrgd :o w"nperrisohriipt i—z aatcicoonu"n,t   +h ianbti:l i"tRya,n kniontg  'bayc ciomupnotritbainlciet y—' "p,r icoart·ietgyo r+y :i z"aWtoirokn"" ,} ,c
+                a
+                  t e g o r/y/:  🟡 "CWLoArSkS"I C} ,—
+                  f a m o{u swloyr dt:r i"cckoyn sEonlgildiasthi owno"r,d s 
+                      h i n t{:  w"oCrodm:b i"naipnpgo iinnttmoe notn"e,  s t r u chtiunrte:  —" Ac osnc·shoeldiudl·eadt imoene"t,i ncga t—e gaopr·PyO:I N"TW·omrekn"t "},, 
+                    c a t e g{o rwyo:r d":C l"agsosviecr"n a}n,c
+                    e " ,    {   w o rhdi:n t":o c"cRuurlreesn caen"d,  o v e r s ihgihntt :—  "gTowvoe rCn' s+,  atnwcoe ,R 'nso  —e xittr ao cl·CeUtRtRe·resn"c,e  coactceugrosr yt:w i"cWeo!r"k,"  c}a,t
+                    e g o r y{:  w"oCrlda:s s"iacr"c h}i,t
+                    e c t u r{e "w,o r d :  h"irnetc:o m"mSetnrdu"c,t u r a l   d ehsiingtn:  —" Oanrec hCi,·T EtCw·ot uMr'es,  —n orte ·C'OaMr·cMheentde"c,t ucraet'e"g,o rcya:t e"gColrays:s i"cW"o r}k,"
+                             } , 
+                              {   w o{r dw:o r"de:m b"afrrraagsmse"n,t e d " ,      h i n th:i n"tR:e a"lBlryo,k erne ailnltyo  edmibsacrornansescitnegd  — ptiweoc eRs' s— ,f rtawgo· MSE'NsT"·e,d "c,a tceagtoergyo:r y":C l"aWsosrikc""  }},,
+
+                              {{  wwoorrdd::  ""oWpeedrnaetsidoanya"l," ,           hhiinntt::  ""DSaayy- tiot- dsalyo wrluyn:n iWnegd ·N— EoSp·deary·a t— itohne  +D  ahli"d,e sc"a,t ecgaotreyg:o r"yW:o r"kC"l a}s,s
+                                i c "   }{, 
+                                w o r d :{  "wcoerndt:r a"lFiezberdu"a,r y " ,    h i n t :   "hUinndte:r  "oFneeb ·cReUn·atreyr  —o ft hceo nftirroslt  —R  ciesn tsrialle n+t  ibzuetd "m,u scta tbeeg owrryi:t t"eWno"r,k "c a}t,e
+                                g o r y :{  "wColrads:s i"cs"t a}k,e
+                                  h o l d e{r "w,o r d :   "hpirnitv:i l"eSgoem"e,o n e   w i t hh iinntt:e r"eNsot  'idn'  o—u tpcroimvei ·L— EsGtEa,k en o+t  h'oplrdievri"l,e dcgaet'e"g,o rcya:t e"gWoorryk:"  "}C,l
+                                  a s s i c{"  w}o,r
+                                  d :   " t{r iwaogred":,  " r e c e i p t " ,h i n t :   " S o rhtiinntg:  b"yI  pbreifoorriet yE  —e xFcreepntc ha fotreirg iCn ,—  trrei·C·AEGIEP"T,,  csaitleegnotr yP:" ," Wcoartke"g o}r,y
+                                  :   " C l{a swsoircd":  }",c
+                                  o l l a b{o rwaotridv:e "",c o l lheiangtu:e "",D o n e   j o ihnitnlty:  —" Tcwool ·lLa'bso,r  e+n dast iivne ,- enaogtu e' cloilkaeb olreaatgiuvee '— "c,o lc·aLtEeAgGoUrEy":,  "cWaotrekg"o r}y,:
+                                    " C l a{s swiocr"d :} ,"
+                                  i n f r a{s twrourcdt:u r"ea"c,c o mhmiondta:t e""U,n d e r l yhiinngt :f o"uTnwdoa tCi'osn,  —t wion fMr'as  +—  sittr'usc truoroem,y  neonto u'gihn ffaosrt rbuoctthu"r,e 'c"a,t ecgaotreyg:o r"yC:l a"sWsoirck""  }},,
+
+                                            {{  wwoorrdd::  ""meiflfliecnineinucmy"",,            hhiinntt::  ""TRweos uLl'tss,  wt
+  </body>
+    </style></title>
+  </head>
