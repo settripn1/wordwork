@@ -1,0 +1,485 @@
+/*
+ * JPMC Presentation Theme for Marp
+ * Based on JPMorganChase brand guidelines
+ *
+ * COLORS:
+ *   Bronze:     #8F5A38
+ *   Travertine: #F4EFE7
+ *   Black:      #000000
+ *   White:      #FFFFFF
+ *   Sky Blue:   #A4D2F0
+ *   Midnight:   #1D3A5F
+ *
+ * FONTS (system substitutes for JPMC Tiangong / JPMC Sans):
+ *   Serif display: Garamond, Georgia, Times New Roman
+ *   Sans body:     Calibri, Segoe UI, Arial
+ *
+ * SLIDE TYPES (use via <!-- _class: TYPE -->):
+ *   cover            - Full bronze, white text, title slide
+ *   section-divider  - Full bronze, italic section heading + number watermark
+ *   toc              - White, two-column table of contents
+ *   content          - Default white content slide
+ *   two-col          - White, side-by-side columns
+ *   image-right      - White, text left / image placeholder right
+ *   data             - White, optimized for tables and metrics
+ *   travertine       - Cream background variant
+ *   dark             - Midnight blue background
+ */
+
+/* ===================== GLOBAL ===================== */
+
+section {
+  font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+  font-size: 18pt;
+  color: #000000;
+  background: #FFFFFF;
+  width: 1280px;
+  height: 720px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- Page number ---- */
+section::after {
+  font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+  font-size: 8pt;
+  color: #555555;
+  position: absolute;
+  bottom: 14px;
+  right: 20px;
+  background: transparent;
+  padding: 0;
+}
+
+/* ---- Global header bar (non-cover slides) ---- */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 40px 8px 40px;
+  border-bottom: 0.5px solid #AAAAAA;
+  font-size: 7.5pt;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #000000;
+  background: transparent;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ---- Typography ---- */
+
+h1 {
+  font-family: 'Garamond', 'Georgia', 'Times New Roman', serif;
+  font-size: 72pt;
+  font-weight: 400;
+  line-height: 0.95;
+  margin: 0 0 12px 0;
+  color: inherit;
+}
+
+h2 {
+  font-family: 'Garamond', 'Georgia', 'Times New Roman', serif;
+  font-size: 40pt;
+  font-weight: 400;
+  line-height: 0.95;
+  margin: 0 0 12px 0;
+  color: inherit;
+}
+
+h3 {
+  font-family: 'Garamond', 'Georgia', 'Times New Roman', serif;
+  font-size: 36pt;
+  font-weight: 400;
+  line-height: 1.0;
+  margin: 0 0 10px 0;
+  color: inherit;
+}
+
+h4 {
+  font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+  font-size: 10pt;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  margin: 0 0 6px 0;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #000000;
+  color: inherit;
+}
+
+h5 {
+  font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+  font-size: 12pt;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: inherit;
+}
+
+p {
+  font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+  font-size: 16pt;
+  line-height: 1.25;
+  margin: 0 0 10px 0;
+  color: inherit;
+}
+
+li {
+  font-size: 15pt;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+ul, ol {
+  padding-left: 20px;
+  margin: 0 0 10px 0;
+}
+
+strong {
+  font-weight: 700;
+}
+
+em {
+  color: #8F5A38;
+  font-style: italic;
+}
+
+/* ===================== CONTENT AREA ===================== */
+
+.slide-content {
+  padding: 24px 40px 32px 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================== COVER SLIDE ===================== */
+
+section.cover {
+  background: #8F5A38;
+  color: #FFFFFF;
+  justify-content: space-between;
+  padding: 0;
+}
+
+section.cover header {
+  border-bottom: none;
+  color: rgba(255,255,255,0);
+  pointer-events: none;
+}
+
+section.cover .cover-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px 56px 0 56px;
+}
+
+section.cover h1 {
+  font-size: 72pt;
+  color: #FFFFFF;
+  font-weight: 400;
+  line-height: 1.0;
+  margin-bottom: 4px;
+}
+
+section.cover h2 {
+  font-size: 52pt;
+  color: #C9956A;
+  font-style: italic;
+  font-weight: 400;
+  margin-bottom: 28px;
+}
+
+section.cover p {
+  font-size: 11pt;
+  color: rgba(255,255,255,0.70);
+  margin-bottom: 0;
+}
+
+section.cover .cover-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 32px 56px 28px 56px;
+  margin-top: 32px;
+}
+
+section.cover .logo {
+  font-family: 'Garamond', 'Georgia', serif;
+  font-size: 18pt;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: -0.01em;
+}
+
+section.cover .cover-footer .confidential {
+  font-size: 8pt;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+section.cover::after {
+  display: none;
+}
+
+/* ===================== SECTION DIVIDER ===================== */
+
+section.section-divider {
+  background: #8F5A38;
+  color: #FFFFFF;
+  padding: 0;
+  justify-content: space-between;
+}
+
+section.section-divider header {
+  border-bottom: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 7pt;
+}
+
+section.section-divider .divider-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 56px 56px 56px;
+  position: relative;
+  z-index: 2;
+}
+
+section.section-divider h2 {
+  font-size: 64pt;
+  font-style: italic;
+  color: #FFFFFF;
+  line-height: 1.0;
+  margin-bottom: 28px;
+}
+
+section.section-divider p {
+  font-size: 16pt;
+  color: #FFFFFF;
+  max-width: 52%;
+  line-height: 1.35;
+}
+
+section.section-divider .watermark-num {
+  position: absolute;
+  bottom: -60px;
+  right: -20px;
+  font-family: 'Garamond', 'Georgia', serif;
+  font-size: 380pt;
+  font-weight: 400;
+  color: rgba(0,0,0,0.18);
+  line-height: 1;
+  z-index: 1;
+  user-select: none;
+}
+
+/* ===================== TABLE OF CONTENTS ===================== */
+
+section.toc .slide-content {
+  justify-content: center;
+}
+
+section.toc .toc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 80px;
+  margin-top: 12px;
+}
+
+section.toc .toc-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 14px 0;
+  border-bottom: 1px solid #CCCCCC;
+  font-size: 15pt;
+  font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+}
+
+section.toc .toc-item .toc-label {
+  color: #000000;
+}
+
+section.toc .toc-item .toc-pages {
+  font-size: 11pt;
+  color: #888888;
+  font-weight: 400;
+}
+
+/* ===================== TWO COLUMN ===================== */
+
+section.two-col .slide-content {
+  flex-direction: column;
+}
+
+section.two-col .col-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  flex: 1;
+  margin-top: 8px;
+}
+
+section.two-col .col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================== IMAGE RIGHT ===================== */
+
+section.image-right .slide-content {
+  flex-direction: row;
+  gap: 40px;
+}
+
+section.image-right .text-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+section.image-right .image-area {
+  flex: 1;
+  background: #E8E8E8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11pt;
+  color: #AAAAAA;
+  border: 1px dashed #CCCCCC;
+  min-height: 300px;
+}
+
+section.image-right .image-area img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ===================== DATA SLIDE ===================== */
+
+section.data table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+  font-size: 13pt;
+  margin-top: 8px;
+}
+
+section.data table th {
+  text-align: center;
+  padding: 10px 16px;
+  border-bottom: 1.5px solid #000000;
+  font-weight: 600;
+  font-size: 11pt;
+  letter-spacing: 0.02em;
+}
+
+section.data table th:first-child {
+  text-align: left;
+}
+
+section.data table td {
+  text-align: center;
+  padding: 12px 16px;
+  border-bottom: 1px dashed #CCCCCC;
+  vertical-align: middle;
+}
+
+section.data table td:first-child {
+  text-align: left;
+  font-size: 12pt;
+  max-width: 240px;
+}
+
+section.data .footnote {
+  font-size: 9pt;
+  color: #888888;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 0.5px solid #DDDDDD;
+}
+
+/* Circular metric badge */
+section.data .metric {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #8F5A38;
+  font-size: 12pt;
+  font-weight: 700;
+  color: #000000;
+}
+
+section.data .metric.positive {
+  border-color: #4CAF50;
+  color: #2E7D32;
+}
+
+section.data .metric.negative {
+  border-color: #8F5A38;
+  color: #8F5A38;
+}
+
+/* ===================== TRAVERTINE VARIANT ===================== */
+
+section.travertine {
+  background: #F4EFE7;
+}
+
+/* ===================== DARK VARIANT ===================== */
+
+section.dark {
+  background: #1D3A5F;
+  color: #FFFFFF;
+}
+
+section.dark header {
+  color: rgba(255,255,255,0.55);
+  border-bottom-color: rgba(255,255,255,0.20);
+}
+
+section.dark h4 {
+  border-bottom-color: rgba(255,255,255,0.40);
+}
+
+/* ===================== UTILITY CLASSES ===================== */
+
+.bronze { color: #8F5A38; }
+.muted  { color: #888888; }
+.small  { font-size: 11pt; }
+.caption { font-size: 10pt; color: #888888; }
+
+.highlight-box {
+  background: #F4EFE7;
+  border-left: 4px solid #8F5A38;
+  padding: 14px 20px;
+  margin: 12px 0;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #CCCCCC;
+  margin: 12px 0;
+}
+
+.color-bronze    { background: #8F5A38; }
+.color-travertine { background: #F4EFE7; }
+.color-black     { background: #000000; }
+.color-skyblue   { background: #A4D2F0; }
