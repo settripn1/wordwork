@@ -483,3 +483,227 @@ section.dark h4 {
 .color-travertine { background: #F4EFE7; }
 .color-black     { background: #000000; }
 .color-skyblue   { background: #A4D2F0; }
+
+/* ===================== INSIGHTS + CHART ===================== */
+
+section.insights-chart .insights-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  flex: 1;
+  margin-top: 8px;
+}
+
+section.insights-chart .insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+section.insights-chart .insights-list strong em {
+  color: #8F5A38;
+  font-style: italic;
+}
+
+section.insights-chart .insights-list p {
+  font-size: 13pt;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 0.5px solid #DDDDDD;
+}
+
+section.insights-chart .chart-box {
+  background: #F4EFE7;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+section.insights-chart .chart-box strong {
+  font-size: 11pt;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* ===================== STATS + CHART ===================== */
+
+section.stats-chart .stats-chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  flex: 1;
+  margin-top: 8px;
+}
+
+section.stats-chart .stat-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+section.stats-chart .stat-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 0.5px solid #DDDDDD;
+}
+
+section.stats-chart .stat-pct {
+  font-family: 'Garamond', 'Georgia', serif;
+  font-size: 36pt;
+  font-weight: 400;
+  color: #8F5A38;
+  min-width: 90px;
+  line-height: 1;
+}
+
+section.stats-chart .stat-icon {
+  font-size: 22pt;
+  min-width: 36px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+section.stats-chart .stat-copy {
+  font-size: 13pt;
+  line-height: 1.3;
+}
+
+section.stats-chart .chart-box {
+  background: #F4EFE7;
+  padding: 20px 24px;
+}
+
+/* ===================== DONUT CHARTS ===================== */
+
+section.donut-charts .slide-content {
+  justify-content: space-between;
+}
+
+section.donut-charts .donut-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 24px;
+  flex: 1;
+  padding: 16px 0;
+}
+
+section.donut-charts .donut-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+}
+
+section.donut-charts .donut-ring {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 12px solid var(--color, #8F5A38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Garamond', 'Georgia', serif;
+  font-size: 28pt;
+  font-weight: 400;
+  color: #000000;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+section.donut-charts .donut-item p {
+  font-size: 12pt;
+  text-align: center;
+  line-height: 1.3;
+  color: #444444;
+}
+
+section.donut-charts .callout-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding-top: 16px;
+  border-top: 0.5px solid #DDDDDD;
+}
+
+section.donut-charts .icon-callout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+section.donut-charts .callout-icon {
+  width: 44px;
+  height: 44px;
+  background: #8F5A38;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18pt;
+  flex-shrink: 0;
+}
+
+section.donut-charts .icon-callout p {
+  font-size: 12pt;
+  line-height: 1.35;
+  margin: 0;
+}
+
+/* ===================== CLOSING SLIDE ===================== */
+
+section.closing {
+  background: #8F5A38;
+  color: #FFFFFF;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+section.closing header {
+  display: none;
+}
+
+section.closing .closing-logo {
+  font-family: 'Garamond', 'Georgia', serif;
+  font-size: 52pt;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+section.closing::after {
+  display: none;
+}
+
+/* ===================== NUMBERED LIST STYLES ===================== */
+
+section .numbered-insights ol {
+  counter-reset: insight-counter;
+  list-style: none;
+  padding: 0;
+}
+
+section .numbered-insights ol li {
+  counter-increment: insight-counter;
+  position: relative;
+  padding-left: 0;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 0.5px solid #DDDDDD;
+}
+
+section .numbered-insights ol li::before {
+  content: counter(insight-counter, decimal-leading-zero);
+  font-family: 'Garamond', 'Georgia', serif;
+  font-size: 28pt;
+  color: #8F5A38;
+  font-weight: 400;
+  display: block;
+  line-height: 1;
+  margin-bottom: 4px;
+}

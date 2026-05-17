@@ -253,6 +253,180 @@ Class: `toc`
 
 ---
 
+### 9. NUMBERED INSIGHTS + CHART
+Use: When you have 3-4 key findings alongside a bar chart.
+Class: `insights-chart`
+
+```markdown
+<!-- _class: insights-chart -->
+
+<div class="slide-content">
+
+#### Data Visualization Title Goes Here
+
+<div class="insights-grid">
+<div class="insights-list">
+
+**1. *First insight headline sits here***
+
+Supporting detail for this insight. Two to three sentences maximum providing context.
+
+**2. *Second insight headline sits here***
+
+Supporting detail for this insight. Two to three sentences maximum providing context.
+
+**3. *Third insight headline sits here***
+
+Supporting detail for this insight. Keep consistent length with other insights.
+
+**4. *Fourth insight headline sits here***
+
+Supporting detail for this insight. Keep consistent length with other insights.
+
+</div>
+<div class="chart-box">
+
+**Chart title goes here**
+
+[Bar chart placeholder — replace with chart image or description of data]
+Categories: Label1, Label2, Label3, Label4, Label5, Label6
+Values: 22%, 18%, 16%, 16%, 17%, 11%
+
+</div>
+</div>
+
+</div>
+```
+
+---
+
+### 10. LARGE STATS + ICON + HORIZONTAL BAR CHART
+Use: Survey results where you want the big number AND category breakdown.
+Class: `stats-chart`
+
+```markdown
+<!-- _class: stats-chart -->
+
+<div class="slide-content">
+
+#### Data Visualization Title Goes Here
+
+<div class="stats-chart-grid">
+<div class="stat-list">
+
+<div class="stat-row">
+  <span class="stat-pct">33%</span>
+  <span class="stat-icon">👥</span>
+  <div class="stat-copy"><strong>Short headline</strong><br>Supporting description text here.</div>
+</div>
+
+<div class="stat-row">
+  <span class="stat-pct">26%</span>
+  <span class="stat-icon">🚩</span>
+  <div class="stat-copy"><strong>Short headline</strong><br>Supporting description text here.</div>
+</div>
+
+<div class="stat-row">
+  <span class="stat-pct">18%</span>
+  <span class="stat-icon">💼</span>
+  <div class="stat-copy"><strong>Short headline</strong><br>Supporting description text here.</div>
+</div>
+
+</div>
+<div class="chart-box horizontal">
+
+**Chart title goes here**
+
+| Category | Value |
+|---|---|
+| Category A | 22% |
+| Category B | 18% |
+| Category C | 16% |
+| Category D | 16% |
+| Category E | 11% |
+
+</div>
+</div>
+
+</div>
+```
+
+Notes: 
+- The large % numbers render in Bronze (#8F5A38)
+- Use Unicode icons as placeholders — user replaces with JPMC icons from the template
+- Divider lines appear between each stat-row automatically
+
+---
+
+### 11. DONUT CHARTS + ICON CALLOUTS
+Use: Showing 3-4 key percentages as ring/donut visuals with supporting callouts.
+Class: `donut-charts`
+
+```markdown
+<!-- _class: donut-charts -->
+
+<div class="slide-content">
+
+#### Data Visualization Title Goes Here
+
+<div class="donut-row">
+
+<div class="donut-item">
+<div class="donut-ring" style="--pct:88; --color:#2D7A6F;">88%</div>
+<p>Label text<br>goes here</p>
+</div>
+
+<div class="donut-item">
+<div class="donut-ring" style="--pct:95; --color:#7068B0;">95%</div>
+<p>Label text<br>goes here</p>
+</div>
+
+<div class="donut-item">
+<div class="donut-ring" style="--pct:58; --color:#AAAAAA;">58%</div>
+<p>Label text<br>goes here</p>
+</div>
+
+<div class="donut-item">
+<div class="donut-ring" style="--pct:48; --color:#4A9088;">48%</div>
+<p>Label text<br>goes here</p>
+</div>
+
+</div>
+
+<div class="callout-row">
+
+<div class="icon-callout">
+<div class="callout-icon">💛</div>
+<p>Supporting callout text goes here. Two to three sentences providing context for the data above.</p>
+</div>
+
+<div class="icon-callout">
+<div class="callout-icon">💛</div>
+<p>Supporting callout text goes here. Two to three sentences providing context for the data above.</p>
+</div>
+
+</div>
+
+</div>
+```
+
+Donut color suggestions by sentiment: positive → `#2D7A6F` (teal) or `#7068B0` (violet), neutral → `#4A9088`, muted → `#AAAAAA`
+
+---
+
+### 12. CLOSING / END SLIDE
+Use: Final slide of any deck. Just the logo, no content.
+Class: `closing`
+
+```markdown
+<!-- _class: closing -->
+<!-- _paginate: false -->
+
+<div class="closing-logo">JPMorganChase</div>
+```
+
+---
+
 ## Color Reference
 
 | Name | Hex | Use |
@@ -270,6 +444,83 @@ Chart colors (use in sequence for data visualizations):
 3. `#4A9B8F` (Teal)
 4. `#7B68C8` (Violet)
 5. `#3BAF8A` (Green)
+
+---
+
+## Chart Colors (use in this sequence for data visualizations)
+
+Always use colors in this order for bars, lines, and pie/donut segments:
+
+| Order | Color | Hex | Style |
+|---|---|---|---|
+| 1 | Dark Navy | `#2B4C6F` | Darkest bars, primary series |
+| 2 | Lavender | `#8B7EC8` | Second series |
+| 3 | Dark Teal | `#2D7055` | Third series |
+| 4 | Medium Teal | `#4A9088` | Fourth series |
+| 5 | Violet | `#7068B0` | Fifth series |
+| 6 | Mint | `#5DC8B8` | Lightest, sixth series |
+
+For donut/ring charts: match color to sentiment. Teal for positive, violet for notable, gray for neutral/low.
+For stat percentages (large numbers): always Bronze `#8F5A38`.
+
+---
+
+## Complete Icon Library
+
+Icons are line-weight, monochrome (black or white depending on background). Copy from the template's Iconography section. Available icons:
+
+**People & Organization:**
+Community, Employee Experience, Career Growth, Team Diversity, Teamwork, Collaboration/Partnership, Organization/Structure, Recruitment, Manager, Hiring/New Hires
+
+**Actions & Process:**
+Change, Processes/Mechanism, Access/Unlocking, Launching New Projects, Problem Solving/Fitting Pieces Together, Strategic Thinking, Motivation, Ideas and Innovation, Foundational Research, Surveys or Feedback
+
+**Technology & Data:**
+Desktop, Tablet, Phone, Laptop, Data Storage, Bar Chart, Pie Chart, Program Pulse, Technology, Knowledge/Learning Resources, Cognitive Processes, Search
+
+**Finance & Business:**
+General Investment, Green Investment, Finance, Commerce, Charitable Giving, Retirement, Business, Careers/Skills
+
+**Communication & Criteria:**
+Messages/Comms, Email Communication, Comments, Criteria, Calendar, Objectives, Leadership
+
+**Wellbeing & Values:**
+Wellness/Sentiment, Work-Life Balance, Fairness or Evaluation, Guidance/Direction, Sustainability, Healthcare, Financial Health
+
+**Global & Society:**
+Global/International, Agriculture, Industries, Community Development, Security, Social
+
+**Achievement:**
+Growth, Awards, Medals/Valor, Rewards, Star, Thumbs Up, Goal, Insights
+
+**Other:**
+Location, Time/Clock, Challenges, Support, Employee Experience
+
+**Icon usage rules:**
+- Use Black icons on white/travertine slides
+- Use White icons on Bronze/dark slides  
+- Icon color can be changed via Format → Graphics Outline in PowerPoint
+- Icons are standalone decorative elements — always pair with a text label
+
+---
+
+## How to Choose a Layout
+
+When generating slides, match content type to layout:
+
+| Content | Layout |
+|---|---|
+| Opening / closing | `cover` or `closing` |
+| Section break | `section-divider` with correct watermark number |
+| Navigation / agenda | `toc` |
+| Single narrative point | default content |
+| Two parallel ideas | `two-col` |
+| Key conclusion / exec summary | large headline in default content |
+| Photo or imagery story | `image-right` |
+| 3-4 key stats with breakdown | `stats-chart` |
+| Survey/scorecard matrix | `data` |
+| Findings + visual bar chart | `insights-chart` |
+| % ring metrics | `donut-charts` |
 
 ---
 
