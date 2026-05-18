@@ -427,6 +427,254 @@ Class: `closing`
 
 ---
 
+### 13. HERO SPLIT
+Use: When you need a powerful visual statement — large serif title on the left with travertine background, labeled content on the right with white background. Good for vision slides, strategy intros, and "what we believe" slides.
+Class: `hero-split`
+
+```markdown
+<!-- _class: hero-split -->
+
+<div class="hero-left">
+
+#### Section Label
+
+## Large Impactful Headline That States the Core Message
+
+*Bronze italic subtitle or mission statement sits here.*
+
+</div>
+<div class="hero-right">
+
+**CATEGORY ONE**
+
+Description of this category in two sentences. Keep it tight and direct.
+
+**CATEGORY TWO**
+
+Description of this category. Parallel structure helps readability.
+
+**CATEGORY THREE**
+
+Description of this third item. End with the key implication.
+
+</div>
+```
+
+Note: This layout hides the header bar — the `#### Section Label` inside `.hero-left` serves as the page label.
+
+---
+
+### 14. ICON CARDS
+Use: When you have 3–4 parallel items (pillars, capabilities, focus areas) that each need a title and supporting description. Each card gets an icon, an italic bronze title, and body text.
+Class: `icon-cards`
+
+3-column (default):
+```markdown
+<!-- _class: icon-cards -->
+
+<div class="slide-content">
+
+#### Section Label
+
+## Optional Slide Headline
+
+<div class="cards-grid">
+<div class="card">
+<div class="card-icon">◎</div>
+
+##### Early Data Validation
+
+Description of what this area covers. Two to three sentences of supporting detail that explain the value or approach.
+
+</div>
+<div class="card">
+<div class="card-icon">⬡</div>
+
+##### Pre-Training Assessment
+
+Description of what this area covers. Two to three sentences of supporting detail that explain the value or approach.
+
+</div>
+<div class="card">
+<div class="card-icon">△</div>
+
+##### Measurement
+
+Description of what this area covers. Two to three sentences of supporting detail that explain the value or approach.
+
+</div>
+</div>
+
+</div>
+```
+
+4-column variant — add class `four-up` to the grid div:
+```html
+<div class="cards-grid four-up">
+```
+
+---
+
+### 15. LABELED LIST + VISUAL
+Use: When you have 4–6 named principles, pillars, or operating norms alongside a diagram or illustration. The Bronze ALL-CAPS labels create strong visual rhythm.
+Class: `labeled-list`
+
+```markdown
+<!-- _class: labeled-list -->
+
+<div class="slide-content">
+
+#### Section Label
+
+## Optional Headline
+
+<div class="list-area">
+
+<div class="list-item">
+<div class="list-label">Employee Focused</div>
+<div class="list-body">Develop a culture that relentlessly focuses on our employees and provides cohesive, frictionless experiences.</div>
+</div>
+
+<div class="list-item">
+<div class="list-label">Work Efficiently</div>
+<div class="list-body">Ensure optimal value for every dollar spent. Drive a mindset of doing more with less.</div>
+</div>
+
+<div class="list-item">
+<div class="list-label">Outcome Oriented</div>
+<div class="list-body">Align what we do to results that our employees value and measure progress against those outcomes.</div>
+</div>
+
+<div class="list-item">
+<div class="list-label">Speed to Deliver</div>
+<div class="list-body">Develop practices for teams to quickly iterate through discovery, design, and build.</div>
+</div>
+
+</div>
+
+<div class="visual-area">
+  [Diagram or illustration — replace with img tag]
+</div>
+
+</div>
+```
+
+---
+
+### 16. FOUR QUADRANT
+Use: Quarterly reviews, strategic priorities, workstream status — anything that naturally breaks into 4 named areas. Each quadrant has a bronze label, bold title, italic description, and a short list.
+Class: `four-quad`
+
+```markdown
+<!-- _class: four-quad -->
+
+<div class="slide-content">
+
+#### Section Label — Q1 Progress
+
+<div class="quad">
+<div class="quad-label">Priority #1</div>
+<div class="quad-title">New Hire Transformation</div>
+<div class="quad-subtitle">Reduce time-to-competence for new banking specialists</div>
+
+- Accelerated time to competence by 20% in Manila/Cebu
+- Kicked off UK review with cross-functional team
+
+</div>
+
+<div class="quad">
+<div class="quad-label">Priority #2</div>
+<div class="quad-title">Chase Berlin</div>
+<div class="quad-subtitle">Support mobilization with skilled and ready specialists</div>
+
+- Scoped detailed project plan, removed key barriers
+- Commenced build for core induction journeys
+
+</div>
+
+<div class="quad">
+<div class="quad-label">Priority #3</div>
+<div class="quad-title">Portfolio Delivery & Evolution</div>
+<div class="quad-subtitle">Deliver first-class learning portfolio aligned to business priorities</div>
+
+- Increased digital mix to 50% vs instructor-led
+- Launched Excellerate Pilot in ICB for microlearning
+
+</div>
+
+<div class="quad">
+<div class="quad-label">Priority #4</div>
+<div class="quad-title">Operational Excellence</div>
+<div class="quad-subtitle">Improved operational effectiveness and team capabilities</div>
+
+- Matured leadership team through 2 new VP appointments
+- Enhanced controls through JPMC Firmwide TPM governance
+
+</div>
+
+</div>
+```
+
+---
+
+### 17. USE CASE
+Use: AI use cases, project spotlights, or case studies where a specific person or team is featured. Person photo and bio top-left, labeled content sections top-right, three summary cards at the bottom.
+Class: `use-case`
+
+```markdown
+<!-- _class: use-case -->
+
+<div class="slide-content">
+
+#### AI Use Case Spotlight
+
+## Enhancing the Recruitment Intake Call
+
+<div class="use-case-top">
+
+<div class="person-block">
+  <img src="path/to/photo.jpg" alt="Name" />
+  <div class="person-name">Payal Lala</div>
+  <div class="person-role">Ops Recruiting CIB<br>Mumbai, India</div>
+</div>
+
+<div class="use-case-detail">
+<div class="detail-label">Problem Statement</div>
+<div class="detail-body">How can we enhance alignment and communication among stakeholders to streamline the recruitment process and effectively identify qualified candidates?</div>
+
+<div class="detail-label">LLM Prompt</div>
+<div class="detail-body">Design a recruitment intake form that captures accurate details related to the role, enabling the sourcing team to find the right candidates and talent.</div>
+</div>
+
+</div>
+
+<div class="use-case-cards">
+
+<div class="uc-card">
+<span class="card-icon">👥</span>
+<div class="detail-label">User Base</div>
+<p>Recruiters, Sourcers, Hiring Managers. Benefit: better matching and stronger relationships.</p>
+</div>
+
+<div class="uc-card">
+<span class="card-icon">📊</span>
+<div class="detail-label">Output</div>
+<p>Structured intake form with skill-specific questions for hiring manager conversations.</p>
+</div>
+
+<div class="uc-card">
+<span class="card-icon">✓</span>
+<div class="detail-label">Impact</div>
+<p>Improved efficiency. Increased quality of hire. Faster, more successful outcomes.</p>
+</div>
+
+</div>
+
+</div>
+```
+
+---
+
 ## Color Reference
 
 | Name | Hex | Use |
@@ -506,21 +754,31 @@ Location, Time/Clock, Challenges, Support, Employee Experience
 
 ## How to Choose a Layout
 
+**RULE: Always use a named layout class. Never invent custom CSS, never write inline styles, never create a layout not listed here.** If content doesn't fit a layout perfectly, trim the content — do not modify the layout structure.
+
 When generating slides, match content type to layout:
 
-| Content | Layout |
+| Content type | Layout class |
 |---|---|
-| Opening / closing | `cover` or `closing` |
-| Section break | `section-divider` with correct watermark number |
+| Opening slide | `cover` |
+| Final slide | `closing` |
+| Section break between topics | `section-divider` (watermark number = section number) |
 | Navigation / agenda | `toc` |
-| Single narrative point | default content |
-| Two parallel ideas | `two-col` |
-| Key conclusion / exec summary | large headline in default content |
-| Photo or imagery story | `image-right` |
-| 3-4 key stats with breakdown | `stats-chart` |
-| Survey/scorecard matrix | `data` |
-| Findings + visual bar chart | `insights-chart` |
-| % ring metrics | `donut-charts` |
+| Single narrative point, bullets | default (no class) |
+| Key conclusion, exec takeaway | default with `## large headline` |
+| Two parallel ideas, before/after | `two-col` |
+| Photo or imagery alongside text | `image-right` |
+| Survey / scorecard table | `data` |
+| 3-4 findings + bar chart | `insights-chart` |
+| Large % stats + category breakdown | `stats-chart` |
+| Ring / donut metric charts | `donut-charts` |
+| Warm background, softer tone | `travertine` |
+| Dark emphasis slide | `dark` |
+| Vision statement, strategy intro | `hero-split` |
+| 3–4 pillars / capabilities / focus areas | `icon-cards` |
+| 4–6 named principles with diagram | `labeled-list` |
+| Quarterly / priority status, 2×2 | `four-quad` |
+| AI use case, project spotlight, case study | `use-case` |
 
 ---
 

@@ -84,8 +84,8 @@ JPMorganChase always speaks with clarity, authority and accessibility. Use the l
 - Use Bronze as the primary accent color
 - Typography is always Black, White, or Bronze only
 - Maintain generous white space — don't crowd slides
-- Serif font (Garamond/Georgia) is for display only — headlines and titles
-- Body copy always in Calibri or Segoe UI
+- Serif font (Tiempos Text / Georgia fallback) is for display only — headlines and titles
+- Body copy always in SOMS / Calibri fallback
 
 <div class="highlight-box">
 

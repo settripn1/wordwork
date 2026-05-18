@@ -707,3 +707,330 @@ section .numbered-insights ol li::before {
   line-height: 1;
   margin-bottom: 4px;
 }
+
+/* ===================== HERO SPLIT ===================== */
+/* Large serif title left (travertine) / content right (white) */
+
+section.hero-split {
+  padding: 0;
+  flex-direction: row;
+}
+
+section.hero-split header {
+  display: none;
+}
+
+section.hero-split .hero-left {
+  width: 40%;
+  min-width: 40%;
+  background: #F4EFE7;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 40px 56px 56px;
+}
+
+section.hero-split .hero-left h4 {
+  border-bottom: 2px solid rgba(0,0,0,0.15);
+  margin-bottom: auto;
+  color: #000000;
+}
+
+section.hero-split .hero-left h2 {
+  font-size: 52pt;
+  line-height: 1.0;
+  color: #000000;
+  margin-top: auto;
+  margin-bottom: 16px;
+}
+
+section.hero-split .hero-left p {
+  font-size: 14pt;
+  color: #8F5A38;
+  font-style: italic;
+  line-height: 1.35;
+  margin: 0;
+}
+
+section.hero-split .hero-right {
+  flex: 1;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 56px;
+}
+
+section.hero-split .hero-right strong {
+  display: block;
+  font-size: 9pt;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: #8F5A38;
+  margin-top: 16px;
+  margin-bottom: 4px;
+}
+
+section.hero-split .hero-right strong:first-child {
+  margin-top: 0;
+}
+
+section.hero-split .hero-right p {
+  font-size: 13pt;
+  line-height: 1.4;
+  margin: 0 0 16px 0;
+  padding-bottom: 16px;
+  border-bottom: 0.5px solid #E0E0E0;
+}
+
+section.hero-split .hero-right p:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* ===================== ICON CARDS ===================== */
+/* 3- or 4-column cards with icon, italic bronze title, body text */
+
+section.icon-cards .cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  flex: 1;
+  margin-top: 12px;
+}
+
+section.icon-cards .cards-grid.four-up {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+section.icon-cards .card {
+  border: 1px solid #CCCCCC;
+  padding: 20px 20px 24px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+section.icon-cards .card-icon {
+  font-size: 22pt;
+  color: #8F5A38;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+
+section.icon-cards .card h5 {
+  font-family: 'Tiempos Text', 'Georgia', serif;
+  font-size: 12pt;
+  font-weight: 400;
+  font-style: italic;
+  color: #8F5A38;
+  margin-bottom: 10px;
+}
+
+section.icon-cards .card p {
+  font-size: 12pt;
+  line-height: 1.4;
+  color: #333333;
+  margin: 0;
+  flex: 1;
+}
+
+/* ===================== LABELED LIST + VISUAL ===================== */
+/* Bronze ALL-CAPS stacked list left / diagram or image right */
+
+section.labeled-list .slide-content {
+  flex-direction: row;
+  gap: 48px;
+  align-items: flex-start;
+}
+
+section.labeled-list .list-area {
+  flex: 0 0 55%;
+  display: flex;
+  flex-direction: column;
+}
+
+section.labeled-list .list-item {
+  padding: 12px 0;
+  border-bottom: 0.5px solid #DDDDDD;
+}
+
+section.labeled-list .list-item:last-child {
+  border-bottom: none;
+}
+
+section.labeled-list .list-label {
+  font-family: 'SOMS', 'Calibri', sans-serif;
+  font-size: 9pt;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: #8F5A38;
+  margin-bottom: 3px;
+}
+
+section.labeled-list .list-body {
+  font-size: 12pt;
+  line-height: 1.4;
+  color: #333333;
+}
+
+section.labeled-list .visual-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F4EFE7;
+  min-height: 200px;
+}
+
+section.labeled-list .visual-area img {
+  max-width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+}
+
+/* ===================== FOUR QUADRANT ===================== */
+/* 2×2 grid — priorities, quarterly status, strategic pillars */
+
+section.four-quad .slide-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px 48px;
+}
+
+section.four-quad .quad {
+  display: flex;
+  flex-direction: column;
+  padding-top: 12px;
+  border-top: 1.5px solid #CCCCCC;
+}
+
+section.four-quad .quad-label {
+  font-family: 'SOMS', 'Calibri', sans-serif;
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: #8F5A38;
+  margin-bottom: 2px;
+}
+
+section.four-quad .quad-title {
+  font-family: 'SOMS', 'Calibri', sans-serif;
+  font-size: 13pt;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 2px;
+}
+
+section.four-quad .quad-subtitle {
+  font-size: 10pt;
+  color: #888888;
+  font-style: italic;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+section.four-quad .quad ul {
+  margin: 4px 0 0 0;
+  padding-left: 16px;
+}
+
+section.four-quad .quad li {
+  font-size: 11pt;
+  line-height: 1.4;
+  margin-bottom: 3px;
+}
+
+/* ===================== USE CASE ===================== */
+/* Person photo + bio left / labeled content right / 3-card bottom row */
+
+section.use-case .use-case-top {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 32px;
+  margin-bottom: 20px;
+}
+
+section.use-case .person-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 4px;
+}
+
+section.use-case .person-block img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #8F5A38;
+  margin-bottom: 10px;
+}
+
+section.use-case .person-name {
+  font-family: 'Tiempos Text', 'Georgia', serif;
+  font-size: 13pt;
+  font-weight: 400;
+  margin-bottom: 2px;
+}
+
+section.use-case .person-role {
+  font-family: 'SOMS', 'Calibri', sans-serif;
+  font-size: 10pt;
+  color: #888888;
+  line-height: 1.35;
+}
+
+section.use-case .use-case-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+section.use-case .detail-label {
+  font-family: 'SOMS', 'Calibri', sans-serif;
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8F5A38;
+  margin-bottom: 2px;
+}
+
+section.use-case .detail-body {
+  font-size: 12pt;
+  line-height: 1.4;
+  margin: 0;
+}
+
+section.use-case .use-case-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: auto;
+}
+
+section.use-case .uc-card {
+  border: 1px solid #CCCCCC;
+  padding: 16px 18px;
+}
+
+section.use-case .uc-card .card-icon {
+  font-size: 18pt;
+  color: #555555;
+  margin-bottom: 6px;
+  display: block;
+}
+
+section.use-case .uc-card .detail-label {
+  margin-bottom: 6px;
+}
+
+section.use-case .uc-card p {
+  font-size: 11pt;
+  line-height: 1.35;
+  margin: 0;
+}
