@@ -8,8 +8,8 @@ All slides are written in Marp Markdown. The theme file is `slides/jpmc-theme.cs
 ## Brand Rules (Non-Negotiable)
 
 - **Typography color**: Only Black, White, or Bronze (#8F5A38) — never other colors for text
-- **Serif font** (Garamond/Georgia): Only for slide titles (h1), section headings (h2), and large headlines (h3)
-- **Sans font** (Calibri/Segoe UI): All body copy, labels, captions, table content
+- **Serif font** (Tiempos Text / Georgia fallback): Only for slide titles (h1), section headings (h2), and large headlines (h3)
+- **Sans font** (SOMS / Calibri fallback): All body copy, labels, captions, table content
 - **Bronze** (#8F5A38) is the primary brand accent — use for emphasis, borders, section dividers
 - **Travertine** (#F4EFE7) is the warm background — use sparingly, not on every slide
 - Slides must breathe — never fill a slide with more than 4 bullet points
@@ -528,14 +528,14 @@ When generating slides, match content type to layout:
 
 | Style | Font | Size | Weight | Case | Use |
 |---|---|---|---|---|---|
-| Presentation Title | Garamond/Georgia | 72pt | Regular | Title | Cover h1 |
-| Section Heading | Garamond/Georgia | 64pt | Regular | Sentence, Italic | Section divider h2 |
-| Large Headline | Garamond/Georgia | 40pt | Regular | Sentence | Standalone statement h2 |
-| Headline | Garamond/Georgia | 36pt | Regular | Sentence | Content headings h3 |
-| Page Label | Calibri/Segoe UI | 10pt | Bold | ALL CAPS | Every slide's h4 label |
-| Large Body | Calibri/Segoe UI | 18pt | Regular | Sentence | Primary body text |
-| Body | Calibri/Segoe UI | 16pt | Regular | Sentence | Standard body text |
-| Caption | Calibri/Segoe UI | 10pt | Regular | Sentence | Footnotes, image captions |
+| Presentation Title | Tiempos Text / Georgia | 72pt | Regular | Title | Cover h1 |
+| Section Heading | Tiempos Text / Georgia | 64pt | Regular | Sentence, Italic | Section divider h2 |
+| Large Headline | Tiempos Text / Georgia | 40pt | Regular | Sentence | Standalone statement h2 |
+| Headline | Tiempos Text / Georgia | 36pt | Regular | Sentence | Content headings h3 |
+| Page Label | SOMS / Calibri | 10pt | Bold | ALL CAPS | Every slide's h4 label |
+| Large Body | SOMS / Calibri | 18pt | Regular | Sentence | Primary body text |
+| Body | SOMS / Calibri | 16pt | Regular | Sentence | Standard body text |
+| Caption | SOMS / Calibri | 10pt | Regular | Sentence | Footnotes, image captions |
 
 ---
 
