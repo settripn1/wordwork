@@ -224,6 +224,214 @@ Body text continues normally below the highlight box.
 
 ---
 
+<!-- _class: hero-split -->
+
+<div class="hero-left">
+
+#### Section Label
+
+## Large Impactful Headline That States the Core Message
+
+*Bronze italic subtitle or mission statement sits here.*
+
+</div>
+<div class="hero-right">
+
+**CATEGORY ONE**
+
+Description of this category in two sentences. Keep it tight and direct.
+
+**CATEGORY TWO**
+
+Description of this category. Parallel structure helps readability.
+
+**CATEGORY THREE**
+
+Description of this third item. End with the key implication.
+
+</div>
+
+---
+
+<!-- _class: icon-cards -->
+
+<div class="slide-content">
+
+#### Section Label
+
+<div class="cards-grid">
+<div class="card">
+<div class="card-icon">◎</div>
+
+##### Card Title One
+
+Description of what this area covers. Two to three sentences of supporting detail.
+
+</div>
+<div class="card">
+<div class="card-icon">⬡</div>
+
+##### Card Title Two
+
+Description of what this area covers. Two to three sentences of supporting detail.
+
+</div>
+<div class="card">
+<div class="card-icon">△</div>
+
+##### Card Title Three
+
+Description of what this area covers. Two to three sentences of supporting detail.
+
+</div>
+</div>
+
+</div>
+
+---
+
+<!-- _class: labeled-list -->
+
+<div class="slide-content">
+
+#### Section Label
+
+## Optional Headline
+
+<div class="list-area">
+
+<div class="list-item">
+<div class="list-label">Principle One</div>
+<div class="list-body">Description of this principle in one to two sentences. Keep parallel with other items.</div>
+</div>
+
+<div class="list-item">
+<div class="list-label">Principle Two</div>
+<div class="list-body">Description of this principle in one to two sentences. Keep parallel with other items.</div>
+</div>
+
+<div class="list-item">
+<div class="list-label">Principle Three</div>
+<div class="list-body">Description of this principle in one to two sentences. Keep parallel with other items.</div>
+</div>
+
+<div class="list-item">
+<div class="list-label">Principle Four</div>
+<div class="list-body">Description of this principle in one to two sentences. Keep parallel with other items.</div>
+</div>
+
+</div>
+
+<div class="visual-area">
+  [Replace with: &lt;img src="path/to/diagram.png" /&gt;]
+</div>
+
+</div>
+
+---
+
+<!-- _class: four-quad -->
+
+<div class="slide-content">
+
+#### Section Label — Q1 Progress
+
+<div class="quad">
+<div class="quad-label">Priority #1</div>
+<div class="quad-title">Workstream Name</div>
+<div class="quad-subtitle">Brief description of what this priority addresses</div>
+
+- Key achievement one with measurable result
+- Key achievement two with measurable result
+
+</div>
+
+<div class="quad">
+<div class="quad-label">Priority #2</div>
+<div class="quad-title">Workstream Name</div>
+<div class="quad-subtitle">Brief description of what this priority addresses</div>
+
+- Key achievement one with measurable result
+- Key achievement two with measurable result
+
+</div>
+
+<div class="quad">
+<div class="quad-label">Priority #3</div>
+<div class="quad-title">Workstream Name</div>
+<div class="quad-subtitle">Brief description of what this priority addresses</div>
+
+- Key achievement one with measurable result
+- Key achievement two with measurable result
+
+</div>
+
+<div class="quad">
+<div class="quad-label">Priority #4</div>
+<div class="quad-title">Workstream Name</div>
+<div class="quad-subtitle">Brief description of what this priority addresses</div>
+
+- Key achievement one with measurable result
+- Key achievement two with measurable result
+
+</div>
+
+</div>
+
+---
+
+<!-- _class: use-case -->
+
+<div class="slide-content">
+
+#### AI Use Case Spotlight
+
+## Slide Headline Describing the Use Case
+
+<div class="use-case-top">
+
+<div class="person-block">
+  <img src="path/to/photo.jpg" alt="Person Name" />
+  <div class="person-name">First Last</div>
+  <div class="person-role">Title<br>Location</div>
+</div>
+
+<div class="use-case-detail">
+<div class="detail-label">Problem Statement</div>
+<div class="detail-body">What challenge or opportunity prompted this use case? One to two sentences describing the business need.</div>
+
+<div class="detail-label">LLM Prompt</div>
+<div class="detail-body">What was asked of the AI? Describe the prompt approach and what it was designed to produce.</div>
+</div>
+
+</div>
+
+<div class="use-case-cards">
+
+<div class="uc-card">
+<span class="card-icon">👥</span>
+<div class="detail-label">User Base</div>
+<p>Who uses this output and how they benefit from it.</p>
+</div>
+
+<div class="uc-card">
+<span class="card-icon">📊</span>
+<div class="detail-label">Output</div>
+<p>What the AI produced and what form it took.</p>
+</div>
+
+<div class="uc-card">
+<span class="card-icon">✓</span>
+<div class="detail-label">Impact</div>
+<p>Measurable or qualitative outcome from using this approach.</p>
+</div>
+
+</div>
+
+</div>
+
+---
+
 <!-- _class: cover -->
 <!-- _paginate: false -->
 

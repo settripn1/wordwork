@@ -754,7 +754,7 @@ Location, Time/Clock, Challenges, Support, Employee Experience
 
 ## How to Choose a Layout
 
-**RULE: Always use a named layout class. Never invent custom CSS, never write inline styles, never create a layout not listed here.** If content doesn't fit a layout perfectly, trim the content — do not modify the layout structure.
+**RULE: First check the available layout classes below and use the closest match. Only create a new custom layout if none of the existing ones fit the content — and if you do, follow the same naming and CSS conventions as the existing classes.**
 
 When generating slides, match content type to layout:
 
